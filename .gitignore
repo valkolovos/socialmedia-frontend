@@ -52,4 +52,5 @@ accessibility-reports/
 *.zip
 *.log
 src/data/deploy.json
+.babelrc
 .DS_Store
