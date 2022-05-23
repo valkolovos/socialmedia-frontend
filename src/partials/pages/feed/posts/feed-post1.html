@@ -335,6 +335,7 @@
                         <p class="control">
                             <textarea class="textarea comment-textarea" rows="5" placeholder="Write a comment..."></textarea>
                         </p>
+                        <div id="feed-post-1-comment-upload" class="feed-upload"></div>
                     </div>
                     <!-- Additional actions -->
                     <div class="actions">
@@ -350,7 +351,7 @@
                             </div>
                             <div class="action is-upload">
                                 <i data-feather="camera"></i>
-                                <input type="file">
+                                <input id="comment-post-1-upload-input" type="file" accept=".png, .jpg, .jpeg" onchange="readURL(this)" data-target-id="#feed-post-1-comment-upload">
                             </div>
                             <a class="button is-solid primary-button raised">Post Comment</a>
                         </div>

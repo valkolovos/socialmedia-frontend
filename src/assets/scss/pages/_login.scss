@@ -214,6 +214,10 @@ Login styles
         font-size: .9rem;
         color: $light-text;
         margin-bottom: 1rem;
+
+        &-error {
+          color: $red;
+        }
     }
 
     .login-form {

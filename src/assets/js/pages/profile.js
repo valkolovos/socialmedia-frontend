@@ -333,7 +333,7 @@ $(document).ready(function(){
     if ($('#profile-main, #pages-main').length) {
 
         //Init post comments
-        initPostComments();
+        // initPostComments();
 
         //Star friends widget
         $('.star-friend').on('click', function(){
@@ -407,5 +407,9 @@ $(document).ready(function(){
         })
 
     }
+
+    // set page data
+    $('#timeline-profile-name').text(JSON.parse(window.localStorage.profile).display_name);
+    $('#timeline-profile-handle').text(JSON.parse(window.localStorage.profile).handle);
 
 })

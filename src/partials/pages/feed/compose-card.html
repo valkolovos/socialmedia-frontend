@@ -35,13 +35,13 @@
             <!-- Compose form -->
             <div class="compose">
                 <div class="compose-form">
-                    <img src="https://via.placeholder.com/300x300" data-demo-src="assets/img/avatars/jenna.png" alt="">
+                    <img src="https://via.placeholder.com/300" data-demo-src="assets/img/avatars/jenna.png" alt="">
                     <div class="control">
                         <textarea id="publish" class="textarea" rows="3" placeholder="Write something about you..."></textarea>
                     </div>
                 </div>
 
-                <div id="feed-upload" class="feed-upload">
+                <div id="compose-feed-upload" class="feed-upload">
 
                 </div>
 
@@ -226,7 +226,7 @@
                         <div class="compose-option is-centered">
                             <i data-feather="camera"></i>
                             <span>Photo/Video</span>
-                            <input id="feed-upload-input-1" type="file" accept=".png, .jpg, .jpeg" onchange="readURL(this)">
+                            <input id="feed-upload-input-1" type="file" accept=".png, .jpg, .jpeg" onchange="readURL(this)" data-target-id="#compose-feed-upload" multiple>
                         </div>
                     </div>
                     <!-- Mood action -->
@@ -274,7 +274,7 @@
                 <div class="compose-option">
                     <i data-feather="camera"></i>
                     <span>Media</span>
-                    <input id="feed-upload-input-2" type="file" type="file" accept=".png, .jpg, .jpeg" onchange="readURL(this)">
+                    <input id="feed-upload-input-2" type="file" type="file" accept=".png, .jpg, .jpeg" onchange="readURL(this)" data-target-id="#compose-feed-upload" multiple>
                 </div>
                 <!-- Mood action -->
                 <div id="show-activities" class="compose-option">
@@ -444,7 +444,7 @@
                                     <label for="checkbox-3"></label>
                                 </div>
                             </div>
-                            <img class="friend-avatar" src="https://via.placeholder.com/300x300" data-demo-src="assets/img/avatars/dan.jpg" alt="">
+                            <img class="friend-avatar" src="https://via.placeholder.com/300" data-demo-src="assets/img/avatars/dan.jpg" alt="">
                             <div class="friend-name">Dan Walker</div>
                         </div>
                         <!-- Friend -->
@@ -455,7 +455,7 @@
                                     <label for="checkbox-4"></label>
                                 </div>
                             </div>
-                            <img class="friend-avatar" src="https://via.placeholder.com/300x300" data-demo-src="assets/img/avatars/daniel.jpg" alt="">
+                            <img class="friend-avatar" src="https://via.placeholder.com/300" data-demo-src="assets/img/avatars/daniel.jpg" alt="">
                             <div class="friend-name">Daniel Wellington</div>
                         </div>
                         <!-- Friend -->
@@ -466,7 +466,7 @@
                                     <label for="checkbox-5"></label>
                                 </div>
                             </div>
-                            <img class="friend-avatar" src="https://via.placeholder.com/300x300" data-demo-src="assets/img/avatars/stella.jpg" alt="">
+                            <img class="friend-avatar" src="https://via.placeholder.com/300" data-demo-src="assets/img/avatars/stella.jpg" alt="">
                             <div class="friend-name">Stella Bergmann</div>
                         </div>
                         <!-- Friend -->
@@ -477,7 +477,7 @@
                                     <label for="checkbox-6"></label>
                                 </div>
                             </div>
-                            <img class="friend-avatar" src="https://via.placeholder.com/300x300" data-demo-src="assets/img/avatars/david.jpg" alt="">
+                            <img class="friend-avatar" src="https://via.placeholder.com/300" data-demo-src="assets/img/avatars/david.jpg" alt="">
                             <div class="friend-name">David Kim</div>
                         </div>
                         <!-- Friend -->
@@ -488,7 +488,7 @@
                                     <label for="checkbox-7"></label>
                                 </div>
                             </div>
-                            <img class="friend-avatar" src="https://via.placeholder.com/300x300" data-demo-src="assets/img/avatars/nelly.png" alt="">
+                            <img class="friend-avatar" src="https://via.placeholder.com/300" data-demo-src="assets/img/avatars/nelly.png" alt="">
                             <div class="friend-name">Nelly Schwartz</div>
                         </div>
                     </div>

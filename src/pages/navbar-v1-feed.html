@@ -14,9 +14,9 @@ title: Feed
         <div class="columns">
             <!-- Left side column -->
             <div class="column is-3 is-hidden-mobile">
-                <!-- Weather widget -->
-                <!-- /partials/widgets/weather-widget.html -->
-                {{> weather-widget}}
+                <!-- Friend card -->
+                <!-- /partials/pages/feed/friend-card.html -->
+                {{> friend-card}}
 
                 <!-- Pages widget -->
                 <!-- /partials/widgets/recommended-pages-1-widget.html -->
@@ -35,33 +35,7 @@ title: Feed
             <!-- Middle column -->
             <div class="column is-6">
 
-                <!-- Publishing Area -->
-                <!-- /partials/pages/feed/compose-card.html -->
-                {{> compose-card}}
-
-                <!-- Post 1 -->
-                <!-- /partials/pages/feed/posts/feed-post1.html -->
-                {{> feed-post1}}
-
-                <!-- Post 2 -->
-                <!-- /partials/pages/feed/posts/feed-post2.html -->
-                {{> feed-post2}}
-
-                <!-- Post 3 -->
-                <!-- /partials/pages/feed/posts/feed-post3.html -->
-                {{> feed-post3}}
-
-                <!-- Post 4 -->
-                <!-- /partials/pages/feed/posts/feed-post4.html -->
-                {{> feed-post4}}
-
-                <!-- Post 5 -->
-                <!-- /partials/pages/feed/posts/feed-post5.html -->
-                {{> feed-post5}}
-
-                <!-- Post 6 -->
-                <!-- /partials/pages/feed/posts/feed-post6.html -->
-                {{> feed-post6}}
+                <div id="post-data"></div>
 
                 <!-- Load more posts -->
                 <div class=" load-more-wrap narrow-top has-text-centered">
@@ -76,6 +50,10 @@ title: Feed
             <div class="column is-3">
 
                 <!-- Stories widget -->
+                <!-- Weather widget -->
+                <!-- /partials/widgets/weather-widget.html -->
+                {{> weather-widget}}
+
                 <!-- /partials/widgets/stories-widget.html -->
                 {{> stories-widget}}
 

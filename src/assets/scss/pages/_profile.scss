@@ -827,31 +827,6 @@ Profile styles
                 }
             }
 
-            .star-friend {
-                height: 44px;
-                width: 44px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                margin-left: auto;
-                cursor: pointer;
-
-                &.is-active {
-                    svg {
-                        transform: rotate(360deg);
-                        stroke: $primary;
-                        fill: $primary;
-                    }
-                }
-
-                svg {
-                    height: 20px;
-                    width: 20px;
-                    stroke: $muted-grey;
-                    transition: all .3s;
-                    transform: rotate(0);
-                }
-            }
         }
     }
 }
@@ -2708,6 +2683,7 @@ Profile styles
     }
 
     .friend-item {
+        position: relative;
         display: block;
         width: 100%;
         padding: 30px;
@@ -2800,6 +2776,96 @@ Profile styles
         p {
             color: $muted-grey;
             font-size: .8rem;
+        }
+
+        @mixin friendAction() {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            height: 44px;
+            width: 44px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: auto;
+            cursor: pointer;
+
+            svg {
+                height: 20px;
+                width: 20px;
+                stroke: $muted-grey;
+                transition: all .3s;
+                transform: rotate(0);
+            }
+        }
+
+        .star-friend {
+            @include friendAction();
+
+            &.is-active {
+                svg {
+                    transform: rotate(360deg);
+                    stroke: $primary;
+                    fill: $primary;
+                }
+            }
+        }
+
+        .pending-friend {
+            @include friendAction();
+            @mixin pending-action-button() {
+                position: relative;
+                display: block;
+                padding-right: 4px;
+
+                &:hover {
+                    svg {
+                        stroke: $white;
+                        fill: $primary;
+                    }
+                }
+            }
+
+            .pending-confirm {
+                @include pending-action-button()
+            }
+
+            .pending-decline {
+                @include pending-action-button()
+            }
+        }
+
+        .friend-stats {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+
+            .stat-block {
+                text-align: center;
+                padding: 0 20px;
+
+                &:nth-child(2) {
+                    border-left: 1px solid darken($fade-grey, 3%);
+                    border-right: 1px solid darken($fade-grey, 3%);
+                }
+
+                label {
+                    display: block;
+                    text-transform: uppercase;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 500;
+                    font-size: .6rem;
+                    color: $muted-grey;
+                }
+
+                .stat-number {
+                    font-family: Montserrat, sans-serif;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    color: $dark-text;
+                }
+            }
         }
     }
 }

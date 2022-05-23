@@ -51,3 +51,5 @@ dist/
 accessibility-reports/
 *.zip
 *.log
+src/data/deploy.json
+.DS_Store

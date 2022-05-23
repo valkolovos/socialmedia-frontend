@@ -21,6 +21,13 @@ initPageloader();
 
 $(document).ready(function(){
 
+    let bucketPath = __BUCKET_PATH__;
+    let loginPath = `${bucketPath}/login-boxed.html`;
+    let signupPath = `${bucketPath}/signup-v2.html`;
+    if (window.location.pathname !== loginPath && window.location.pathname !== signupPath) {
+        checkLoggedIn()
+    }
+
     if (env === 'development') {
 		//Demo images
         changeDemoHrefs();
@@ -64,8 +71,8 @@ $(document).ready(function(){
     //Init navbar v2
     initNavbarV2();
 
-    //Init sidebar v1
-    initSidebarV1();
+    //Logout button
+    initLogout();
 
     //Dashboard
     linkCheck();

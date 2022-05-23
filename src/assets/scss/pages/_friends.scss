@@ -79,6 +79,7 @@ Friend lists
 
     &:hover {
         box-shadow: $light-box-shadow;
+        cursor: pointer;
     }
 
     .shape {
@@ -104,6 +105,28 @@ Friend lists
                 fill: $primary;
             }
         }
+
+        svg {
+            height: 20px;
+            width: 20px;
+            stroke: $placeholder;
+            fill: $placeholder;
+            transition: all .3s;
+            transform: rotate(0);
+        }
+    }
+
+    .pending-friend {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        height: 44px;
+        width: 44px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: auto;
+        cursor: pointer;
 
         svg {
             height: 20px;

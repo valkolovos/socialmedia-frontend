@@ -6,8 +6,8 @@ title: Signup
 <!--Fake navigation-->
 <div class="fake-nav">
     <a href="/" class="logo">
-        <img class="light-image" src="assets/img/logo/friendkit-bold.svg" width="112" height="28" alt="">
-        <img class="dark-image" src="assets/img/logo/friendkit-white.svg" width="112" height="28" alt="">
+      <img class="light-image" src="{{deploy.bucket_path}}assets/img/logo/friendkit-bold.svg?_={{deploy.cache_bust}}" width="112" height="28" alt="">
+      <img class="dark-image" src="{{deploy.bucket_path}}assets/img/logo/friendkit-white.svg?_={{deploy.cache_bust}}" width="112" height="28" alt="">
     </a>
 </div>
 
@@ -19,67 +19,79 @@ title: Signup
 
                 <h2 class="form-title has-text-centered">Hey there!</h2>
                 <h3 class="form-subtitle has-text-centered">Lets create your account.</h3>
+                <h3 class="form-subtitle-error is-hidden has-text-centered"></h3>
 
                 <!--Form-->
                 <div class="login-form">
                     <div class="form-panel">
                         <div class="columns is-multiline">
-                            <div class="column is-6">
+                            <div class="column is-12">
                                 <div class="field">
-                                    <label>First Name</label>
-                                    <div class="control">
-                                        <input type="text" class="input" placeholder="Enter your first name">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="column is-6">
-                                <div class="field">
-                                    <label>Last Name</label>
-                                    <div class="control">
-                                        <input type="text" class="input" placeholder="Enter your last name">
+                                    <label>Email</label>
+                                    <div class="control has-validation email">
+                                        <input type="text" name="email" class="input" placeholder="Enter your email address">
                                     </div>
                                 </div>
                             </div>
                             <div class="column is-12">
                                 <div class="field">
-                                    <label>Email</label>
-                                    <div class="control">
-                                        <input type="text" class="input" placeholder="Enter your email address">
+                                    <label>Display Name</label>
+                                    <div class="control has-validation displayName">
+                                        <input type="text" name="displayName" class="input" placeholder="Enter your display name">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-12">
+                                <div class="field">
+                                    <label>Handle</label>
+                                    <div class="control has-tooltip has-validation handle" data-placement="top" data-title="Handle is a short name used to find you">
+                                        <input type="text" name="handle" class="input" placeholder="Enter your handle">
                                     </div>
                                 </div>
                             </div>
                             <div class="column is-12">
                                 <div class="field">
                                     <label>Password</label>
-                                    <div class="control">
-                                        <input type="password" class="input" placeholder="Enter your password">
+                                    <div class="control has-validation password">
+                                        <input type="password" name="password" class="input" placeholder="Enter your password">
                                     </div>
                                 </div>
                             </div>
                             <div class="column is-12">
-                                <div class="field is-flex">
-                                    <div class="switch-block">
-                                        <label class="f-switch">
-                                            <input type="checkbox" class="is-switch">
-                                            <i></i>
-                                        </label>
-                                        <div class="meta">
-                                            <p>Subscribe to Newsletter?</p>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
-                
+
                     <div class="buttons mt-2">
-                        <a class="button is-solid primary-button is-fullwidth raised">Create Account</a>
+                        <a class="button is-solid dark-grey-button is-fullwidth raised">Create Account</a>
                     </div>
 
                     <div class="account-link has-text-centered">
-                        <a href="/login-boxed.html">Have an account? Sign In</a>
+                        <a href="{{deploy.bucketPath}}login-boxed.html">Have an account? Sign In</a>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div id="signup-pending-modal-trigger" class="modal-trigger is-hidden" data-modal="signup-pending-modal"></div>
+</div>
+
+<div id="signup-pending-modal" class="modal signup-pending-modal is-medium has-light-bg">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="card">
+            <div class="card-heading">
+                <h3>Signup Request Pending</h3>
+                <!-- Close X button -->
+                <div class="close-wrap">
+                    <span class="close-modal">
+                        <i data-feather="x"></i>
+                    </span>
+                </div>
+            </div>
+            <!-- Card body -->
+            <div class="card-body">
+              <p>Your request to sign up has been received. It needs to be validated by an administrator. You will be notified once that has occurred.</p>
             </div>
         </div>
     </div>

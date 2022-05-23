@@ -43,6 +43,31 @@ function initBgImages() {
   }
 }
 
+function checkLoggedIn() {
+  let url = __API_HOST__;
+  $.ajax(
+    {
+      url: `${url}/validate-session`,
+      cache: false,
+      async: false,
+      headers: {
+        'Authorization': window.localStorage.getItem('authToken')
+      },
+      success: function(response) {
+        console.log(response)
+        window.localStorage.setItem('profile', JSON.stringify(response))
+      },
+      statusCode: {
+        401: function(jqxhr, textStatus, errorThrown) {
+          let bucketPath = __BUCKET_PATH__;
+          window.location.href = `${bucketPath}/login-boxed.html`
+          console.log(jqxhr.responseText)
+        }
+      }
+    }
+  )
+}
+
 /* ==========================================================================
 Dark mode
 ========================================================================== */
@@ -160,6 +185,14 @@ function initNavDropdowns() {
       $(".is-account").removeClass("is-opened");
     }
   });
+}
+
+function initLogout() {
+    $('#log-out').click(function() {
+        window.localStorage.removeItem('authToken');
+        window.localStorage.removeItem('authExpires');
+        window.location.reload();
+    });
 }
 
 //Init Cart dropdown
@@ -316,8 +349,12 @@ function initVideoEmbed() {
 }
 
 //Init Like button
-function initLikeButton() {
-  $(".like-button").on("click", function () {
+function initLikeButton(parentElement) {
+  let selector = '.like-button';
+  if (parentElement !== null) {
+    selector = `${parentElement} ${selector}`;
+  }
+  $(selector).on("click", function () {
     $(this).toggleClass("is-active");
   });
 }
@@ -336,8 +373,13 @@ function initLoadMore() {
 }
 
 //Post Comment sections toggling
-function initPostComments() {
-  $(".fab-wrapper.is-comment, .close-comments").on("click", function (e) {
+function initPostComments(parentElement=null) {
+  console.log(`initPostComments ${parentElement}`);
+  let selector = ".fab-wrapper.is-comment, .close-comments"
+  if (parentElement !== null) {
+    selector = `${parentElement} .fab-wrapper.is-comment, ${parentElement} .close-comments`;
+  }
+  $(selector).on("click", function (e) {
     $(this)
       .addClass("is-active")
       .closest(".card")
@@ -371,8 +413,8 @@ function initSimplePopover() {
 }
 
 //Tooltips
-function initTooltips() {
-  $(".has-tooltip").ggtooltip({
+function initTooltips(selector='.has-tooltip') {
+  $(selector).ggtooltip({
     html: true,
     textcolor: "#fff",
     backcolor: "#444",
@@ -814,8 +856,12 @@ Global Modals
 ========================================================================== */
 
 //Init share modal demo
-function initShareModal() {
-  $(".small-fab.share-fab").on("click", function () {
+function initShareModal(parentElement=null) {
+  let selector = ".small-fab.share-fab"
+  if (parentElement !== null) {
+    selector = `${parentElement} ${selector}`;
+  }
+  $(selector).on("click", function () {
     var $this = $(this);
     var postImage = $this
       .closest(".is-post")

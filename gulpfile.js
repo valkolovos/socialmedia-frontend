@@ -22,6 +22,7 @@ const accessibility = require('gulp-accessibility');
 const babel = require('gulp-babel');
 const nodepath = 'node_modules/';
 const assetspath = 'assets/';
+const fs = require('fs');
 
 // File paths
 const files = {
@@ -91,7 +92,7 @@ function compileJS() {
     'src/assets/js/navigation/navbar-v2.js',
     'src/assets/js/navigation/navbar-mobile.js',
     'src/assets/js/navigation/navbar-options.js',
-    'src/assets/js/navigation/sidebar-v1.js',
+    'src/assets/js/api.js',
     'src/assets/js/global.js',
     'src/assets/js/main.js',
     'src/assets/js/touch.js',
@@ -102,14 +103,17 @@ function compileJS() {
     'src/assets/js/pages/feed.js',
     'src/assets/js/pages/stories.js',
     'src/assets/js/pages/friends.js',
+    'src/assets/js/pages/profile-friends.js',
     'src/assets/js/pages/inbox.js',
     'src/assets/js/pages/landing.js',
+    'src/assets/js/pages/login.js',
     'src/assets/js/pages/news.js',
     'src/assets/js/pages/map.js',
     'src/assets/js/pages/profile.js',
     'src/assets/js/pages/questions.js',
     'src/assets/js/pages/shop.js',
     'src/assets/js/pages/signup.js',
+    'src/assets/js/pages/signup-v2.js',
     'src/assets/js/pages/settings.js',
     'src/assets/js/pages/videos.js',
   ])
@@ -349,6 +353,31 @@ function HTMLAccessibility() {
     .pipe(dest('accessibility-reports'));
 }
 
+function writeConfigs(done) {
+  let babelRc = {
+    presets: ['env'],
+    plugins: [['inline-replace-variables', {
+      __API_HOST__: 'http://localhost:8080',
+      __BUCKET_PATH__: ''
+    }]]
+  }
+  let dataJson = {
+    bucket_path: '',
+    cache_bust: new Date().valueOf()
+  };
+  if (process.env.PROJECT) {
+    babelRc.plugins = [['inline-replace-variables', {
+      __API_HOST__: `https://${process.env.PROJECT}.wl.r.appspot.com`,
+      __BUCKET_PATH__: `/frontend-${process.env.PROJECT}`
+    }]]
+    dataJson.bucket_path = `/frontend-${process.env.PROJECT}/`;
+  }
+  fs.writeFileSync('.babelrc', JSON.stringify(babelRc));
+  fs.writeFileSync('src/data/deploy.json', JSON.stringify(dataJson));
+  return done();
+}
+
+
 // RUN ALL LINTERS
 exports.linters = series(htmlLint, scssLint, jsLint);
 
@@ -361,6 +390,7 @@ exports.setup = series(setupBulma);
 // DEV
 exports.dev = series(
   cleanDist, 
+  writeConfigs,
   copyFont, 
   copyData, 
   jsVendor, 
@@ -380,6 +410,7 @@ exports.dev = series(
 // BUILD
 exports.build = series(
   cleanDist, 
+  writeConfigs,
   copyFont, 
   copyData, 
   jsVendor, 
@@ -389,8 +420,6 @@ exports.build = series(
   concatCssPlugins, 
   compileJS, 
   minifyImages,
-  resetPages, 
-  prettyHTML, 
   compileSCSS
 );
 

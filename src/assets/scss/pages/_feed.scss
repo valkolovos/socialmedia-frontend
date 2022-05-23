@@ -17,6 +17,200 @@ Main feed styles
 1. General Layout
 ========================================================================== */
 
+@mixin feedUpload () {
+    .feed-upload {
+        display: block;
+        column-width: 8rem;
+        .upload-wrap {
+            position: relative;
+            height: auto;
+            width: 140px;
+            margin-left: 5px;
+
+            .remove-file {
+                position: absolute;
+                top: -4px;
+                right: -4px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 30px;
+                width: 30px;
+                border-radius: 50%;
+                background: $white;
+                cursor: pointer;
+                transition: background .3s;
+
+                &:hover {
+                    background: lighten($placeholder, 10%);
+                }
+
+                svg {
+                    height: 16px;
+                    width: 16px;
+                    stroke: $medium-text;
+                }
+            }
+
+            img {
+                display: inline-block;
+                width: 100%;
+                height: auto;
+                object-fit: cover;
+                border-radius: .5rem;
+            }
+        }
+    }
+}
+
+@mixin postImage() {
+    .post-image {
+        position: relative;
+        margin: 10px 0;
+
+        img {
+            display: block;
+            border-radius: .75rem;
+        }
+
+        .like-wrapper {
+            position: absolute;
+            bottom: -27px;
+            right: 0;
+            max-height: 54px;
+        }
+
+        .fab-wrapper {
+            position: absolute;
+            bottom: -21px;
+            max-height: 43px;
+
+            &.is-share {
+                right: 58px;
+            }
+
+            &.is-comment {
+                right: 105px;
+            }
+        }
+
+        .triple-grid {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+
+            a {
+                &.is-half {
+                    display: block;
+                    width: calc(50% - .25rem) !important;
+                    height: 100%;
+                }
+            }
+
+            img {
+                display: block;
+                margin-bottom: .5rem;
+                object-fit: cover;
+                width: 100%;
+                height: 50%;
+            }
+
+            .like-wrapper {
+                position: absolute;
+                bottom: -18px;
+                right: 18px;
+                max-height: 54px;
+            }
+
+            .fab-wrapper {
+                position: absolute;
+                bottom: -13px;
+                max-height: 43px;
+
+                &.is-share {
+                    right: 76px;
+                }
+
+                &.is-comment {
+                    right: 123px;
+                }
+            }
+        }
+
+        .masonry-grid {
+            position: relative;
+            display: flex;
+            align-items: center;
+
+            img {
+                display: block;
+                margin-bottom: .5rem;
+                object-fit: cover;
+            }
+
+            .masonry-column-left {
+                height: 100%;
+                width: calc(61% - .5rem);
+            }
+
+            .masonry-column-right {
+                width: 39%;
+                height: 100%;
+                margin-left: .5rem;
+                a {
+                  &.is-more {
+                    position: absolute;
+                  }
+                }
+                .img-count {
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  color: lightgray;
+                  font-size: xx-large;
+                  font-weight: bold;
+                  text-shadow: 2px 2px 4px #333333;
+                }
+            }
+
+            .like-wrapper {
+                position: absolute;
+                bottom: -18px;
+                right: 0;
+                max-height: 54px;
+            }
+
+            .fab-wrapper {
+                position: absolute;
+                bottom: -13px;
+                max-height: 43px;
+
+                &.is-share {
+                    right: 58px;
+                }
+
+                &.is-comment {
+                    right: 105px;
+                }
+            }
+        }
+    }
+}
+
+// need some padding around the post-filters box on the feed page
+#activity-feed {
+    .columns {
+        .column {
+            .post-filters {
+                padding-bottom: 1em;
+            }
+        }
+    }
+}
+
 .card {
     &.is-new-content {
         .tabs-wrapper {
@@ -95,46 +289,7 @@ Main feed styles
                 align-items: stretch;
             }
 
-            .feed-upload {
-                .upload-wrap {
-                    position: relative;
-                    height: auto;
-                    width: 140px;
-
-                    .remove-file {
-                        position: absolute;
-                        top: -4px;
-                        right: -4px;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        height: 30px;
-                        width: 30px;
-                        border-radius: 50%;
-                        background: $white;
-                        cursor: pointer;
-                        transition: background .3s;
-
-                        &:hover {
-                            background: lighten($placeholder, 10%);
-                        }
-
-                        svg {
-                            height: 16px;
-                            width: 16px;
-                            stroke: $medium-text;
-                        }
-                    }
-
-                    img {
-                        display: inline-block;
-                        width: 100%;
-                        height: auto;
-                        object-fit: cover;
-                        border-radius: .5rem;
-                    }
-                }
-            }
+            @include feedUpload();
 
             img {
                 height: 42px;
@@ -628,125 +783,7 @@ Main feed styles
                 }
             }
 
-            .post-image {
-                position: relative;
-                margin: 10px 0;
-
-                img {
-                    display: block;
-                    border-radius: .75rem;
-                }
-
-                .like-wrapper {
-                    position: absolute;
-                    bottom: -27px;
-                    right: 0;
-                    max-height: 54px;
-                }
-
-                .fab-wrapper {
-                    position: absolute;
-                    bottom: -21px;
-                    max-height: 43px;
-
-                    &.is-share {
-                        right: 58px;
-                    }
-
-                    &.is-comment {
-                        right: 105px;
-                    }
-                }
-
-                .triple-grid {
-                    position: relative;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    flex-wrap: wrap;
-
-                    a {
-                        &.is-half {
-                            display: block;
-                            width: calc(50% - .25rem) !important;
-                            height: 100%;
-                        }
-                    }
-
-                    img {
-                        display: block;
-                        margin-bottom: .5rem;
-                        object-fit: cover;
-                        width: 100%;
-                        height: 50%;
-                    }
-
-                    .like-wrapper {
-                        position: absolute;
-                        bottom: -18px;
-                        right: 18px;
-                        max-height: 54px;
-                    }
-
-                    .fab-wrapper {
-                        position: absolute;
-                        bottom: -13px;
-                        max-height: 43px;
-
-                        &.is-share {
-                            right: 76px;
-                        }
-
-                        &.is-comment {
-                            right: 123px;
-                        }
-                    }
-                }
-
-                .masonry-grid {
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-
-                    img {
-                        display: block;
-                        margin-bottom: .5rem;
-                        object-fit: cover;
-                    }
-
-                    .masonry-column-left {
-                        height: 100%;
-                        width: calc(61% - .5rem);
-                    }
-
-                    .masonry-column-right {
-                        width: 39%;
-                        height: 100%;
-                        margin-left: .5rem;
-                    }
-
-                    .like-wrapper {
-                        position: absolute;
-                        bottom: -18px;
-                        right: 0;
-                        max-height: 54px;
-                    }
-
-                    .fab-wrapper {
-                        position: absolute;
-                        bottom: -13px;
-                        max-height: 43px;
-
-                        &.is-share {
-                            right: 58px;
-                        }
-
-                        &.is-comment {
-                            right: 105px;
-                        }
-                    }
-                }
-            }
+            @include postImage();
 
             .post-link {
                 position: relative;
@@ -1156,6 +1193,10 @@ Main feed styles
                                 }
                             }
                         }
+
+                        .comment-image {
+                            @include postImage();
+                        }
                     }
 
                     .media-right {
@@ -1265,6 +1306,8 @@ Main feed styles
                             resize: none;
                         }
                     }
+
+                    @include feedUpload();
 
                     .actions {
                         display: flex;
