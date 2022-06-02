@@ -202,7 +202,7 @@ if ($('#compose-card').length) {
     $('#publish-button').on('click', function() {
         let url = __API_HOST__;
         let submitData = new FormData();
-        submitData.append('message', $('#publish').val());
+        submitData.append('post', $('#publish').val());
         let files = []
         $.each($('#feed-upload-input-1,#feed-upload-input-2'), function(i, uploadInput) {
             for (let i = 0; i < uploadInput.files.length; i++) {
@@ -212,7 +212,7 @@ if ($('#compose-card').length) {
         for (let i = 0; i < files.length; i++) {
             submitData.append(`file-${i}`, files[i]);
         }
-        $.ajax(`${url}/create-message`, {
+        $.ajax(`${url}/create-post`, {
 						/* Set header for the XMLHttpRequest to get data from the web server
 						associated with userIdToken */
 						method: 'POST',

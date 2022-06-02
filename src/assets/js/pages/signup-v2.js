@@ -66,6 +66,8 @@ $(document).ready(function () {
     if (!$('.buttons .button').hasClass('primary-button')) {
       return
     }
+    $('.buttons .button').removeClass('primary-button');
+    $('.buttons .button').addClass('dark-grey-button');
     signup(
         $('input[name="email"]').val(),
         $('input[name="displayName"]').val(),

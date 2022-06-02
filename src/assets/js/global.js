@@ -134,14 +134,14 @@ function initPageloader() {
         $(".pageloader").toggleClass("is-active");
         $(".infraloader").toggleClass("is-active");
         clearTimeout(pageloaderTimeout);
-      }, 700);
+      }, 100);
       //Placeloaders
       if ($("#main-feed").length) {
         var shadowDomTimeout = setTimeout(function () {
           $("#shadow-dom").remove();
           $(".true-dom").removeClass("is-hidden");
           clearTimeout(shadowDomTimeout);
-        }, 2500);
+        }, 200);
       }
       if ($(".questions-wrap").length) {
         var shadowDomTimeout = setTimeout(function () {
@@ -150,7 +150,7 @@ function initPageloader() {
           ).remove();
           $(".true-dom").removeClass("is-hidden");
           clearTimeout(shadowDomTimeout);
-        }, 2500);
+        }, 300);
       }
     });
   }
@@ -374,7 +374,6 @@ function initLoadMore() {
 
 //Post Comment sections toggling
 function initPostComments(parentElement=null) {
-  console.log(`initPostComments ${parentElement}`);
   let selector = ".fab-wrapper.is-comment, .close-comments"
   if (parentElement !== null) {
     selector = `${parentElement} .fab-wrapper.is-comment, ${parentElement} .close-comments`;
@@ -982,3 +981,52 @@ toasts.service = {
     });
   },
 };
+
+function createTime(time) {
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    let myDate = new Date(time);
+    let elapsedSeconds = Math.round(((new Date()).getTime() - myDate.getTime()) / 1000);
+    let returnString;
+    if (elapsedSeconds < 60) {
+      returnString = `${elapsedSeconds} second${elapsedSeconds > 1 ? 's' : ''} ago`;
+    } else if (elapsedSeconds < 60*60) {
+        let minute = Math.floor(elapsedSeconds / 60);
+        returnString = `${minute} minute${minute > 1 ? 's' : ''} ago`;
+    } else if (elapsedSeconds < 60*60*24) {
+        let hour = Math.floor(elapsedSeconds / 60 / 60);
+        returnString = `${hour} hour${hour > 1 ? 's' : ''} ago`;
+    } else {
+        let day = Math.floor(elapsedSeconds / 60 / 60 / 24);
+        returnString = `${day} day${day > 1 ? 's' : ''} ago`;
+    }
+    return {
+      message: returnString,
+      actual: myDate
+    }
+}
+
+function checkVisible( elm, evalType ) {
+    evalType = evalType || "visible";
+
+    var vpH, st, y, elementHeight;
+    try {
+      vpH = $(window).height(), // Viewport Height
+      st = $(window).scrollTop(), // Scroll Top
+      y = $(elm).offset().top,
+      elementHeight = $(elm).height();
+      if ($('.top-nav')) {
+        st += $('.top-nav').height();
+      }
+      if ($('.sub-nav')) {
+        st += $('.sub-nav').height();
+      }
+    } catch (e) {
+      console.log(elm);
+    }
+
+    if (evalType === "visible") return ((y < (vpH + st)) && (y > (st - elementHeight)));
+    if (evalType === "above") return ((y < (vpH + st)));
+}
