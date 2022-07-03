@@ -4,19 +4,92 @@
 Feed page js file
 ========================================================================== */
 
+function initScrollToSelectedPost() {
+  $(window).on("load", function () {
+      var scrollTimeout = setTimeout(function () {
+        if (window.location.href.split('#').length > 1) {
+          let msg_id = window.location.href.split('#')[1];
+          let container = $('#activity-feed');
+          let scrollTo = $(`[data-card-id="${msg_id}"]`);
+          let position = scrollTo.offset().top - container.offset().top + container.scrollTop();
+          $('html,body').stop().animate({ scrollTop: position }, 1000)
+        }
+        clearTimeout(scrollTimeout);
+      }, 500);
+  });
+}
+
+function createReadTimer(post) {
+  if (post.dataset.cardRead !== "false") {
+    return null;
+  }
+  return setTimeout(function() {
+    markPostRead(post.dataset.cardId, function() {
+        if ($(`div[data-notification-id="${post.dataset.cardId}"]`)) {
+          $(`div[data-notification-id="${post.dataset.cardId}"] .media-right .added-icon`).removeClass('is-unread');
+        }
+        delete post.dataset.cardRead;
+    });
+  }, 3000);
+}
+
+function initMarkPostRead() {
+  $(window).on("load", function () {
+    // array of all posts
+    let all = [];
+    // array of indexes (actual integers) of items in 'all' that are currently visible
+    let visible = [];
+    // array of active read timers
+    let readTimers = {};
+    var markPostReadTimeout = setTimeout(function () {
+      if ($('#post-data').length) {
+        $('.is-post').each(function(index) {
+          all.push(this);
+          if (checkVisible(this)) {
+            visible.push(index);
+            readTimers[this.dataset.cardId] = createReadTimer(this)
+          }
+        });
+      }
+      clearTimeout(markPostReadTimeout);
+    }, 1700);
+    $(window).scroll(function (event) {
+        let start = visible[0] > 0 ? visible[0]-1 : 0;
+        let end = visible[visible.length - 1] + 2 < all.length ?
+            visible[visible.length - 1] + 2 : all.length;
+        for (let i = start; i < end; i++) {
+          if (checkVisible(all[i]) && !visible.includes(i)) {
+            let cardId = all[i].dataset.cardId;
+            clearTimeout(readTimers[cardId]);
+            readTimers[cardId] = createReadTimer(all[i])
+            visible.push(i);
+          } else if (!checkVisible(all[i]) && visible.includes(i)) {
+            clearTimeout(readTimers[all[i].dataset.cardId]);
+            visible.splice(visible.indexOf(i), 1)
+          }
+        }
+        visible = visible.sort(function(a,b) { return a-b });
+        //$('.is-post').each(function() {
+            // viewport height, scroll top, post top
+            // if (evalType === "visible") return ((y < (vpH + st)) && (y > (st - elementHeight)));
+            // console.log($(window).height(), $(window).scrollTop(), $(this).offset().top, $(this).height(), checkVisible(this))
+        //});
+        // Do something
+    });
+  })
+}
+
+initScrollToSelectedPost();
+initMarkPostRead();
+
 $(document).ready(function () {
 
     "use strict";
 
-    getConnectionInfo(function(response) {
-      console.log(response)
-      // TODO: handle connection scroll
-    });
-
     if ($('#post-data').length) {
-        let messageResponse = getConnectionMessages();
+        let postResponse = getConnectionPosts();
     } else if ($('.profile-timeline').length) {
-        let messages = getMessages();
+        let posts = getPosts();
     }
 
     if ($('#activity-feed').length) {
@@ -105,20 +178,25 @@ $(document).ready(function () {
         });
     }
 
+    getConnectionInfo(function(response) {
+      initFriendRequestDropdown(response.connections);
+      initPostDropdown(response.post_references);
+    });
+
 });
 
 function postComment(t) {
     let url = __API_HOST__;
-    let messageId = t.dataset.messageId;
+    let postId = t.dataset.postId;
     let submitData = new FormData();
     let urlParams = new URLSearchParams(window.location.search);
-    let files = $(`#${messageId}-upload-input`).first()[0].files;
-    submitData.append('comment', $(`#comment-${messageId}`).val());
+    let files = $(`#${postId}-upload-input`).first()[0].files;
+    submitData.append('comment', $(`#comment-${postId}`).val());
     submitData.append('connectionId', urlParams.get("c_id"));
     for (let i = 0; i < files.length; i++) {
         submitData.append(`file-${i}`, files[i]);
     }
-    $.ajax(`${url}/add-comment/${t.dataset.messageId}`, {
+    $.ajax(`${url}/add-comment/${t.dataset.postId}`, {
         method: 'POST',
         headers: {
             'Authorization': window.localStorage.getItem('authToken')
@@ -137,30 +215,30 @@ function postComment(t) {
             return xhr;
         },
         success: function(response) {
-            console.log(response);
-            $(`#${messageId}-comments-body`).append(buildComment(response));
+            $(`#${postId}-comments-body`).append(buildComment(response));
         },
         error: function(errorData, status, errorThrown) {
-            console.log(status);
-            console.log(errorThrown);
+          // TODO: actually handle this?
+          console.log(status);
+          console.log(errorThrown);
         }
     });
-    $(`#comment-${t.dataset.messageId}`).val('');
-    $(`${t.dataset.messageId}-comment-upload`).empty();
+    $(`#comment-${t.dataset.postId}`).val('');
+    $(`${t.dataset.postId}-comment-upload`).empty();
     feather.replace();
 }
 
-function addAndActivateMessages(messages, appendToElement, buildFunction) {
-    for (let i = 0; i < messages.length; i++) {
-        let parentElement = `[data-card-id="${messages[i].id}"]`
-        appendToElement.append(buildFunction(messages[i]));
+function addAndActivatePosts(posts, appendToElement, buildFunction) {
+    for (let i = 0; i < posts.length; i++) {
+        let parentElement = `[data-card-id="${posts[i].id}"]`
+        appendToElement.append(buildFunction(posts[i]));
         // initDropdown()
-        $(`[data-card-id="${messages[i].id}"] .dropdown-trigger`).click(function () {
+        $(`[data-card-id="${posts[i].id}"] .dropdown-trigger`).click(function () {
             $(".dropdown-trigger").removeClass("is-active");
             $(this).addClass("is-active");
         });
         // initModals()
-        $(`[data-card-id="${messages[i].id}"] .modal-trigger`).on("click", function () {
+        $(`[data-card-id="${posts[i].id}"] .modal-trigger`).on("click", function () {
           var modalID = $(this).attr("data-modal");
           $("#" + modalID).toggleClass("is-active");
         });
@@ -173,75 +251,63 @@ function addAndActivateMessages(messages, appendToElement, buildFunction) {
     getPagesPopovers();
 }
 
-function getMessages() {
+function getPosts() {
     let url = __API_HOST__;
-    let messages;
+    let posts;
     $.ajax(
       {
-        url: `${url}/get-messages`,
+        url: `${url}/get-posts`,
         cache: true,
         async: false,
         headers: {
           'Authorization': window.localStorage.getItem('authToken')
         },
         success: function(response) {
-            console.log(response)
-            addAndActivateMessages(response, $('.profile-timeline'), buildPost);
+            addAndActivatePosts(response, $('.profile-timeline'), buildPost);
         },
         statusCode: {
           401: function(jqxhr, textStatus, errorThrown) {
             window.location.href = '/login-boxed.html'
-            console.log(jqxhr.responseText)
           }
         }
       }
    )
-   return messages;
+   return posts;
 }
 
-function getConnectionMessages() {
+function getConnectionPosts() {
     let url = __API_HOST__;
-    let connectionMessages
+    let connectionPosts
     let urlParams = new URLSearchParams(window.location.search)
     $.ajax(
       {
-        url: `${url}/get-connection-messages/${urlParams.get("c_id")}`,
+        url: `${url}/get-connection-posts/${urlParams.get("c_id")}`,
         cache: true,
         async: false,
         headers: {
           'Authorization': window.localStorage.getItem('authToken')
         },
         success: function(response) {
-            console.log(response)
-            addAndActivateMessages(response, $('#post-data'), buildCard);
+            addAndActivatePosts(response, $('#post-data'), buildCard);
             if (response.length > 0) {
                 $('#avatar-connection-name').html(response[0].profile.display_name);
                 $('#friend-card-post-count').html(response.length);
             }
+            initTooltips('.user-info .has-tooltip');
+
         },
         statusCode: {
           401: function(jqxhr, textStatus, errorThrown) {
             window.location.href = '/login-boxed.html'
-            console.log(jqxhr.responseText)
           }
         }
       }
    )
-   return connectionMessages
+   return connectionPosts
 };
 
 function buildComment(comment) {
-    const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
-    let commentDate = new Date(comment.created);
-    let commentTime;
-    if (commentDate.getHours() > 12) {
-        commentTime = `${('0' + (commentDate.getHours() - 12)).slice(-2)}:${('0' + commentDate.getMinutes()).slice(-2)}pm`;
-    } else {
-        commentTime = `${('0' + commentDate.getHours()).slice(-2)}:${('0' + commentDate.getMinutes()).slice(-2)}am`;
-    }
+    let commentTime = createTime(comment.created);
     let imageHtml = '';
     if (comment.files.length >  0) {
         imageHtml = buildImageHtml(comment, true);
@@ -290,7 +356,7 @@ function buildComment(comment) {
                 <div class="media-content">
                     <div class="comment-text">
                         <a href="#">${comment.profile.display_name}</a>
-                        <span class="time">${commentTime}</span>
+                        <span class="time has-tooltip" data-title="${commentTime.actual}">${commentTime.message}</span>
                         <p>${comment.text}</p>
                     </div>
                     <div class="comment-image">${imageHtml}</div>
@@ -319,7 +385,7 @@ function buildComment(comment) {
     return commentHtml;
 }
 
-function buildPost(message) {
+function buildPost(post) {
     return `
 <div class="profile-post">
     <!-- Timeline -->
@@ -328,25 +394,15 @@ function buildPost(message) {
             <img src="https://via.placeholder.com/300" data-demo-src="assets/img/avatars/jenna.png" alt="">
         </div>
     </div>
-    ${buildCard(message)}
+    ${buildCard(post)}
 </div>`;
 }
 
-function buildCard(message) {
-    const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
-    let messageDate = new Date(message.created);
-    let messageTime;
-    if (messageDate.getHours() > 12) {
-        messageTime = `${('0' + (messageDate.getHours() - 12)).slice(-2)}:${('0' + messageDate.getMinutes()).slice(-2)}pm`;
-    } else {
-        messageTime = `${('0' + messageDate.getHours()).slice(-2)}:${('0' + messageDate.getMinutes()).slice(-2)}am`;
-    }
+function buildCard(post) {
+    let postTime = createTime(post.created);
     let imageHtml = '';
-    if (message.files.length >  0) {
-        imageHtml = buildImageHtml(message);
+    if (post.files.length >  0) {
+        imageHtml = buildImageHtml(post);
     }
     let commentDropdownHtml = `
 <div class="dropdown is-spaced is-right is-neutral dropdown-trigger">
@@ -381,12 +437,12 @@ function buildCard(message) {
 </div>`;
 
     let commentsHtml = '';
-    for (var i = 0; i < message.comments.length; i++) {
-        commentsHtml += buildComment(message.comments[i]);
+    for (var i = 0; i < post.comments.length; i++) {
+        commentsHtml += buildComment(post.comments[i]);
     }
 
     let cardHtml = `
-<div class="card is-post" data-card-id="${message.id}">
+<div class="card is-post" data-card-id="${post.id}" ${post.read === false ? 'data-card-read="false"' : ''}><a href="#${post.id}"></a>
     <!-- Main wrap -->
     <div class="content-wrap">
         <!-- Post header -->
@@ -397,8 +453,8 @@ function buildCard(message) {
                     <img src="https://via.placeholder.com/300" data-demo-src="assets/img/avatars/dan.jpg" data-user-popover="1" alt="">
                 </div>
                 <div class="user-info">
-                    <a href="#">${message.profile.display_name}</a>
-                    <span class="time">${monthNames[messageDate.getMonth()]} ${('0' + messageDate.getDate()).slice(-2)} ${messageDate.getFullYear()}, ${messageTime}</span>
+                    <a href="#">${post.profile.display_name}</a>
+                    <span class="time has-tooltip" data-title="${postTime.actual}">${postTime.message}</span>
                 </div>
             </div>
             <!-- Right side dropdown -->
@@ -448,7 +504,7 @@ function buildCard(message) {
         <div class="card-body">
             <!-- Post body text -->
             <div class="post-text">
-                <p>${message.text}</p>
+                <p>${post.text}</p>
             </div>
             <!-- Featured image -->
             ${imageHtml}
@@ -484,7 +540,7 @@ function buildCard(message) {
                 </div>
                 <div class="comments-count">
                     <i data-feather="message-circle"></i>
-                    <span>${message.comments.length}</span>
+                    <span>${post.comments.length}</span>
                 </div>
             </div>
         </div>
@@ -496,7 +552,7 @@ function buildCard(message) {
         <!-- Header -->
         <div class="comments-heading">
             <h4>Comments
-                <small>(${message.comments.length})</small></h4>
+                <small>(${post.comments.length})</small></h4>
             <div class="close-comments">
                 <i data-feather="x"></i>
             </div>
@@ -504,7 +560,7 @@ function buildCard(message) {
         <!-- /Header -->
 
         <!-- Comments body -->
-        <div class="comments-body has-slimscroll" id="${message.id}-comments-body">
+        <div class="comments-body has-slimscroll" id="${post.id}-comments-body">
           ${commentsHtml}
         </div>
         <!-- /Comments body -->
@@ -516,9 +572,9 @@ function buildCard(message) {
                 <div class="media-content">
                     <div class="field">
                         <p class="control">
-                            <textarea name="comment-${message.id}" id="comment-${message.id}" class="textarea comment-textarea" rows="5" placeholder="Write a comment..."></textarea>
+                            <textarea name="comment-${post.id}" id="comment-${post.id}" class="textarea comment-textarea" rows="5" placeholder="Write a comment..."></textarea>
                         </p>
-                        <div id="${message.id}-comment-upload" class="feed-upload"></div>
+                        <div id="${post.id}-comment-upload" class="feed-upload"></div>
                     </div>
                     <!-- Additional actions -->
                     <div class="actions">
@@ -534,9 +590,9 @@ function buildCard(message) {
                             </div>
                             <div class="action is-upload">
                                 <i data-feather="camera"></i>
-                                <input id="${message.id}-upload-input" type="file" accept=".png, .jpg, .jpeg" onchange="readURL(this)" data-target-id="#${message.id}-comment-upload">
+                                <input id="${post.id}-upload-input" type="file" accept=".png, .jpg, .jpeg" onchange="readURL(this)" data-target-id="#${post.id}-comment-upload">
                             </div>
-                            <a class="button is-solid primary-button raised" data-message-id="${message.id}" onclick="postComment(this)">Post Comment</a>
+                            <a class="button is-solid primary-button raised" data-post-id="${post.id}" onclick="postComment(this)">Post Comment</a>
                         </div>
                     </div>
                 </div>
@@ -572,24 +628,24 @@ function buildActionButtonHtml() {
                 </div>`;
 }
 
-function buildImageHtml(message, isComment=false) {
+function buildImageHtml(post, isComment=false) {
     let imgClass = 'triple-grid';
-    if (message.files.length > 4) {
+    if (post.files.length > 4) {
         imgClass = 'masonry-grid';
     }
     let actionButtonHtml = isComment ? '' : buildActionButtonHtml();
     return `
             <div class="post-image">
                 <div class="${imgClass}">
-                ${message.files.length > 4 ? `<div class="masonry-column-left">` : ''}
-                <a ${message.files.length === 2 || message.files.length === 4 || isComment ? 'class="is-half"' : ''} data-fancybox="post-${message.id}" data-lightbox-type="comments" data-thumb="assets/img/demo/unsplash/1.jpg" href="${message.files[0]}" data-demo-href="assets/img/demo/unsplash/1.jpg">
-                    <img src="${message.files[0]}" data-demo-src="assets/img/demo/unsplash/1.jpg" alt="">
+                ${post.files.length > 4 ? `<div class="masonry-column-left">` : ''}
+                <a ${post.files.length === 2 || post.files.length === 4 || isComment ? 'class="is-half"' : ''} data-fancybox="post-${post.id}" data-lightbox-type="comments" data-thumb="assets/img/demo/unsplash/1.jpg" href="${post.files[0]}" data-demo-href="assets/img/demo/unsplash/1.jpg">
+                    <img src="${post.files[0]}" data-demo-src="assets/img/demo/unsplash/1.jpg" alt="">
                 </a>
-                ${message.files.length > 1 ? `<a class="is-half" data-fancybox="post-${message.id}" data-lightbox-type="comments" data-thumb="assets/img/demo/unsplash/1.jpg" href="${message.files[1]}" data-demo-href="assets/img/demo/unsplash/1.jpg"><img src="${message.files[1]}" data-demo-src="assets/img/demo/unsplash/1.jpg" alt=""></a>` : ''}
-                ${message.files.length > 2 ? `<a class="is-half" data-fancybox="post-${message.id}" data-lightbox-type="comments" data-thumb="assets/img/demo/unsplash/1.jpg" href="${message.files[2]}" data-demo-href="assets/img/demo/unsplash/1.jpg"><img src="${message.files[2]}" data-demo-src="assets/img/demo/unsplash/1.jpg" alt=""></a>` : ''}
-                ${message.files.length > 4 ? '</div><div class="masonry-column-right">' : ''}
-                ${message.files.length > 3 ? `<a class="is-half" data-fancybox="post-${message.id}" data-lightbox-type="comments" data-thumb="assets/img/demo/unsplash/1.jpg" href="${message.files[3]}" data-demo-href="assets/img/demo/unsplash/1.jpg"><img src="${message.files[3]}" data-demo-src="assets/img/demo/unsplash/1.jpg" alt=""></a>` : ''}
-                ${message.files.length > 4 ? `<a ${message.files.length > 5 ? `class="is-more" ` : ''}" data-fancybox="post-${message.id}" data-lightbox-type="comments" data-thumb="assets/img/demo/unsplash/1.jpg" href="${message.files[4]}" data-demo-href="assets/img/demo/unsplash/1.jpg"><img src="${message.files[4]}" data-demo-src="assets/img/demo/unsplash/1.jpg" alt="">${message.files.length > 5 ? `<div class="img-count">+${message.files.length - 5}</div>` : ''  }</a></div>` : ''}
+                ${post.files.length > 1 ? `<a class="is-half" data-fancybox="post-${post.id}" data-lightbox-type="comments" data-thumb="assets/img/demo/unsplash/1.jpg" href="${post.files[1]}" data-demo-href="assets/img/demo/unsplash/1.jpg"><img src="${post.files[1]}" data-demo-src="assets/img/demo/unsplash/1.jpg" alt=""></a>` : ''}
+                ${post.files.length > 2 ? `<a class="is-half" data-fancybox="post-${post.id}" data-lightbox-type="comments" data-thumb="assets/img/demo/unsplash/1.jpg" href="${post.files[2]}" data-demo-href="assets/img/demo/unsplash/1.jpg"><img src="${post.files[2]}" data-demo-src="assets/img/demo/unsplash/1.jpg" alt=""></a>` : ''}
+                ${post.files.length > 4 ? '</div><div class="masonry-column-right">' : ''}
+                ${post.files.length > 3 ? `<a class="is-half" data-fancybox="post-${post.id}" data-lightbox-type="comments" data-thumb="assets/img/demo/unsplash/1.jpg" href="${post.files[3]}" data-demo-href="assets/img/demo/unsplash/1.jpg"><img src="${post.files[3]}" data-demo-src="assets/img/demo/unsplash/1.jpg" alt=""></a>` : ''}
+                ${post.files.length > 4 ? `<a ${post.files.length > 5 ? `class="is-more" ` : ''}" data-fancybox="post-${post.id}" data-lightbox-type="comments" data-thumb="assets/img/demo/unsplash/1.jpg" href="${post.files[4]}" data-demo-href="assets/img/demo/unsplash/1.jpg"><img src="${post.files[4]}" data-demo-src="assets/img/demo/unsplash/1.jpg" alt="">${post.files.length > 5 ? `<div class="img-count">+${post.files.length - 5}</div>` : ''  }</a></div>` : ''}
                 ${actionButtonHtml}
                 </div>
             </div>`

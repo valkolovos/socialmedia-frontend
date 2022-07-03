@@ -587,7 +587,7 @@ Nav drops
                     background: rgba(0, 0, 0, 0.2);
                 }
 
-                &.is-friend-requests, &.is-notifications, &.is-messages {
+                &.is-friend-requests, &.notifications, &.is-messages {
                     padding: 8px 16px;
 
                     .media {
@@ -634,6 +634,15 @@ Nav drops
                             width: 18px;
                             height: 18px;
                             margin: 0 15px;
+
+                            &.is-unread {
+                              background-color: $primary;
+                              border-radius: 6px;
+
+                              svg {
+                                stroke: $white;
+                              }
+                            }
 
                             svg {
                                 height: 18px;

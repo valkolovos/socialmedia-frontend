@@ -61,7 +61,6 @@ function getConnectionInfo(connectionCallback) {
         statusCode: {
           401: function(jqxhr, textStatus, errorThrown) {
             window.location.href = '/login-boxed.html'
-            console.log(jqxhr.responseText)
           }
         }
       }
@@ -120,6 +119,54 @@ function declineConnection(connectionId, callback) {
             'connection_id': connectionId,
             'action': 'decline'
         },
+        headers: {
+          'Authorization': window.localStorage.getItem('authToken')
+        },
+        success: function(response) {
+            callback(response);
+        },
+    });
+}
+
+function markConnectionRead(connectionId, callback) {
+    let url = __API_HOST__;
+    $.ajax({
+        method: 'GET',
+        url: `${url}/mark-connection-read/${connectionId}`,
+        cache: false,
+        async: true,
+        headers: {
+          'Authorization': window.localStorage.getItem('authToken')
+        },
+        success: function(response) {
+            callback(response);
+        },
+    });
+}
+
+function markNotificationRead(postId, callback) {
+    let url = __API_HOST__;
+    $.ajax({
+        method: 'GET',
+        url: `${url}/mark-post-reference-read/${postId}`,
+        cache: false,
+        async: true,
+        headers: {
+          'Authorization': window.localStorage.getItem('authToken')
+        },
+        success: function(response) {
+            callback(response);
+        },
+    });
+}
+
+function markPostRead(postId, callback) {
+    let url = __API_HOST__;
+    $.ajax({
+        method: 'GET',
+        url: `${url}/mark-post-read/${postId}`,
+        cache: false,
+        async: false,
         headers: {
           'Authorization': window.localStorage.getItem('authToken')
         },
