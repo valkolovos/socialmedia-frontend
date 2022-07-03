@@ -54,14 +54,12 @@ function checkLoggedIn() {
         'Authorization': window.localStorage.getItem('authToken')
       },
       success: function(response) {
-        console.log(response)
         window.localStorage.setItem('profile', JSON.stringify(response))
       },
       statusCode: {
         401: function(jqxhr, textStatus, errorThrown) {
           let bucketPath = __BUCKET_PATH__;
           window.location.href = `${bucketPath}/login-boxed.html`
-          console.log(jqxhr.responseText)
         }
       }
     }
@@ -86,7 +84,6 @@ function setThemeToLocalStorage(value) {
 
 function toggleTheme() {
   var theme = window.localStorage.getItem("theme");
-  console.log(theme);
   if (theme != null && theme != undefined) {
     setThemeToLocalStorage(theme);
 
@@ -99,7 +96,6 @@ function toggleTheme() {
 
   $(".theme-toggle input").on("change", function () {
     if ($(this).prop("checked") === true) {
-      console.log("checked");
       setThemeToLocalStorage("dark");
       $(".theme-toggle input").prop("checked", true);
       $(document).trigger("themeChange", "dark");
@@ -386,7 +382,6 @@ function initPostComments(parentElement=null) {
       .toggleClass("is-hidden");
     var jump = $(this).closest(".is-post");
     var new_position = $(jump).offset();
-    console.log(new_position);
     $("html, body")
       .stop()
       .animate({ scrollTop: new_position.top - 70 }, 500);
@@ -562,8 +557,6 @@ function initComboBox() {
     var iconTemplate = '<i class="' + itemIconClass + '"></i>';
     var template = "";
 
-    console.log(itemSvgIcon);
-
     if (
       !$(target).is(".box-dropdown li, body") &&
       !$(target).parents().is(".box-dropdown")
@@ -723,7 +716,6 @@ function initStackedComboBox() {
 
     //Handle dropdown item active state toggle
     $(this).toggleClass("is-active");
-    console.log(skillTemplate);
 
     if ($(".stacked-combo-box li.is-active").length == 0) {
       $("#" + itemRef).remove();
@@ -829,7 +821,6 @@ function initTextFilter() {
           var cardCount = $(".card-row-wrap.is-active").find(
             ".friend-card.is-match"
           ).length;
-          console.log(cardCount);
           if (cardCount == 0) {
             $(".card-row-wrap.is-active")
               .find(".card-row")
@@ -1024,6 +1015,7 @@ function checkVisible( elm, evalType ) {
         st += $('.sub-nav').height();
       }
     } catch (e) {
+      // TODO: handle this?
       console.log(elm);
     }
 

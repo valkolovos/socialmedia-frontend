@@ -12,7 +12,6 @@ function initScrollToSelectedPost() {
           let container = $('#activity-feed');
           let scrollTo = $(`[data-card-id="${msg_id}"]`);
           let position = scrollTo.offset().top - container.offset().top + container.scrollTop();
-          console.log(position);
           $('html,body').stop().animate({ scrollTop: position }, 1000)
         }
         clearTimeout(scrollTimeout);
@@ -26,7 +25,6 @@ function createReadTimer(post) {
   }
   return setTimeout(function() {
     markPostRead(post.dataset.cardId, function() {
-        console.log(`marked my post ${post.dataset.cardId} as read`)
         if ($(`div[data-notification-id="${post.dataset.cardId}"]`)) {
           $(`div[data-notification-id="${post.dataset.cardId}"] .media-right .added-icon`).removeClass('is-unread');
         }
@@ -217,12 +215,12 @@ function postComment(t) {
             return xhr;
         },
         success: function(response) {
-            console.log(response);
             $(`#${postId}-comments-body`).append(buildComment(response));
         },
         error: function(errorData, status, errorThrown) {
-            console.log(status);
-            console.log(errorThrown);
+          // TODO: actually handle this?
+          console.log(status);
+          console.log(errorThrown);
         }
     });
     $(`#comment-${t.dataset.postId}`).val('');
@@ -265,13 +263,11 @@ function getPosts() {
           'Authorization': window.localStorage.getItem('authToken')
         },
         success: function(response) {
-            console.log(response)
             addAndActivatePosts(response, $('.profile-timeline'), buildPost);
         },
         statusCode: {
           401: function(jqxhr, textStatus, errorThrown) {
             window.location.href = '/login-boxed.html'
-            console.log(jqxhr.responseText)
           }
         }
       }
@@ -292,7 +288,6 @@ function getConnectionPosts() {
           'Authorization': window.localStorage.getItem('authToken')
         },
         success: function(response) {
-            console.log(response)
             addAndActivatePosts(response, $('#post-data'), buildCard);
             if (response.length > 0) {
                 $('#avatar-connection-name').html(response[0].profile.display_name);
@@ -304,7 +299,6 @@ function getConnectionPosts() {
         statusCode: {
           401: function(jqxhr, textStatus, errorThrown) {
             window.location.href = '/login-boxed.html'
-            console.log(jqxhr.responseText)
           }
         }
       }

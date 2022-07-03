@@ -56,13 +56,11 @@ function getConnectionInfo(connectionCallback) {
           'Authorization': window.localStorage.getItem('authToken')
         },
         success: function(response) {
-            console.log(response);
             connectionCallback(response);
         },
         statusCode: {
           401: function(jqxhr, textStatus, errorThrown) {
             window.location.href = '/login-boxed.html'
-            console.log(jqxhr.responseText)
           }
         }
       }

@@ -68,6 +68,7 @@ function initFriendRequestDropdown(
         if (this.id.startsWith('confirm') && !this.dataset.read) {
           this.dataset.read = true;
           markConnectionRead(this.dataset.connectionId, function() {
+            // TODO: implement this
             console.log('marked connection read');
           });
         }
@@ -191,6 +192,7 @@ function initPostDropdown(postReferences) {
           if (this.dataset.referenceRead !== "true") {
             this.dataset.referenceRead = "true";
             markNotificationRead(this.dataset.notificationId, function() {
+              // TODO: implement this
               console.log('marked notification read');
             });
           }
