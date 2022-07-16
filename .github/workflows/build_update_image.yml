@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master
-      - auto_update
     paths:
       - update/**
       - .github/workflows/build_update_image.yml
