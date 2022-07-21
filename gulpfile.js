@@ -367,7 +367,7 @@ function writeConfigs(done) {
   };
   if (process.env.PROJECT) {
     babelRc.plugins = [['inline-replace-variables', {
-      __API_HOST__: `https://${process.env.PROJECT}.wl.r.appspot.com`,
+      __API_HOST__: process.env.APP_HOST,
       __BUCKET_PATH__: `/frontend-${process.env.PROJECT}`
     }]]
     dataJson.bucket_path = `/frontend-${process.env.PROJECT}/`;

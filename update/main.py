@@ -38,7 +38,9 @@ def main():
         print('Done installing frontend dependencies')
 
         print('Building frontend...')
-        retry_command(f'./frontend_build.sh {project_name}')
+        app_host = retry_command('gcloud app browse --no-launch-browser')
+        app_host = app_host.replace('\r','').replace('\n','')
+        retry_command(f'./frontend_build.sh {project_name} {app_host}')
         print('Done building frontend...')
 
         bucket_ls_response = retry_command(f'gsutil ls -p {project_name}')
