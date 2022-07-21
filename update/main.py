@@ -28,6 +28,27 @@ def main():
         re_match = project_re.search(project_result)
         project_name = re_match.group(1)
 
+        print('Enabling services...')
+        print('  Enabling appengine service')
+        retry_command('gcloud services enable appengine.googleapis.com')
+
+        print('  Enabling cloudbuild service')
+        retry_command('gcloud services enable cloudbuild.googleapis.com')
+
+        print('  Enabling cloudtasks service')
+        retry_command('gcloud services enable cloudtasks.googleapis.com')
+
+        print('  Enabling cloudscheduler service')
+        retry_command('gcloud services enable cloudscheduler.googleapis.com')
+
+        print('  Enabling secretmanager service')
+        retry_command('gcloud services enable secretmanager.googleapis.com')
+
+        print('  Enabling run service')
+        retry_command('gcloud services enable run.googleapis.com')
+
+        print('Done enabling services')
+
         print('Cloning frontend...')
         retry_command('rm -rf socialmedia-frontend')
         retry_command('git clone https://github.com/valkolovos/socialmedia-frontend.git')
