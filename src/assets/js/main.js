@@ -16,17 +16,45 @@ Main js file
 
 var env = '';
 
+function checkLoggedIn() {
+  let url = __API_HOST__;
+  let redirect;
+  $.ajax(
+    {
+      url: `${url}/validate-session`,
+      cache: false,
+      async: false,
+      headers: {
+        'Authorization': window.localStorage.getItem('authToken')
+      },
+      success: function(response) {
+        window.localStorage.setItem('profile', JSON.stringify(response))
+      },
+      statusCode: {
+        401: function(jqxhr, textStatus, errorThrown) {
+          let bucketPath = __BUCKET_PATH__;
+          console.log(`redirecting to ${bucketPath}/login-boxed.html`);
+          $(window).attr('location',`${bucketPath}/login-boxed.html`);
+        }
+      }
+    }
+  )
+  return redirect;
+}
+
+var bucketPath = __BUCKET_PATH__;
+var loginPath = `${bucketPath}/login-boxed.html`;
+var signupPath = `${bucketPath}/signup-v2.html`;
+
+if (window.location.pathname !== loginPath && window.location.pathname !== signupPath) {
+    checkLoggedIn()
+}
+
 //Pageloader
 initPageloader();
 
-$(document).ready(function(){
 
-    let bucketPath = __BUCKET_PATH__;
-    let loginPath = `${bucketPath}/login-boxed.html`;
-    let signupPath = `${bucketPath}/signup-v2.html`;
-    if (window.location.pathname !== loginPath && window.location.pathname !== signupPath) {
-        checkLoggedIn()
-    }
+$(document).ready(function(){
 
     if (env === 'development') {
 		//Demo images

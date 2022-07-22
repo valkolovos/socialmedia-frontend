@@ -357,8 +357,8 @@ function writeConfigs(done) {
   let babelRc = {
     presets: ['env'],
     plugins: [['inline-replace-variables', {
-      __API_HOST__: 'http://localhost:8080',
-      __BUCKET_PATH__: ''
+      __API_HOST__: process.env.API_HOST ? process.env.API_HOST : 'http://localhost:8080',
+      __BUCKET_PATH__: process.env.BUCKET_PATH ? process.env.BUCKET_PATH : ''
     }]]
   }
   let dataJson = {

@@ -43,29 +43,6 @@ function initBgImages() {
   }
 }
 
-function checkLoggedIn() {
-  let url = __API_HOST__;
-  $.ajax(
-    {
-      url: `${url}/validate-session`,
-      cache: false,
-      async: false,
-      headers: {
-        'Authorization': window.localStorage.getItem('authToken')
-      },
-      success: function(response) {
-        window.localStorage.setItem('profile', JSON.stringify(response))
-      },
-      statusCode: {
-        401: function(jqxhr, textStatus, errorThrown) {
-          let bucketPath = __BUCKET_PATH__;
-          window.location.href = `${bucketPath}/login-boxed.html`
-        }
-      }
-    }
-  )
-}
-
 /* ==========================================================================
 Dark mode
 ========================================================================== */
