@@ -1,3 +1,5 @@
+import { getUserPopovers } from './popovers-users.js'
+
 /*! autocompletes.js | Friendkit | © Css Ninja. 2019-2020 */
 
 /* ==========================================================================

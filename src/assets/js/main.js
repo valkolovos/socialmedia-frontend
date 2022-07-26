@@ -6,6 +6,13 @@ Main js file
 
 "use strict";
 
+import { validateSession } from './api.js';
+import * as global from './global.js';
+import { initNavbarV2 } from './navigation/navbar-v2.js';
+import { initResponsiveMenu } from './navigation/navbar-mobile.js';
+import { getUserPopovers } from './components/popovers-users.js';
+import { getPagesPopovers } from './components/popovers-pages.js';
+
 //Set environment variable (Used for development)
 
 /* 
@@ -16,52 +23,35 @@ Main js file
 
 var env = '';
 
-function checkLoggedIn() {
-  let url = __API_HOST__;
-  let redirect;
-  $.ajax(
-    {
-      url: `${url}/validate-session`,
-      cache: false,
-      async: false,
-      headers: {
-        'Authorization': window.localStorage.getItem('authToken')
-      },
-      success: function(response) {
-        window.localStorage.setItem('profile', JSON.stringify(response))
-      },
-      statusCode: {
-        401: function(jqxhr, textStatus, errorThrown) {
-          let bucketPath = __BUCKET_PATH__;
-          console.log(`redirecting to ${bucketPath}/login-boxed.html`);
-          $(window).attr('location',`${bucketPath}/login-boxed.html`);
-        }
-      }
-    }
-  )
-  return redirect;
-}
-
 var bucketPath = __BUCKET_PATH__;
 var loginPath = `${bucketPath}/login-boxed.html`;
 var signupPath = `${bucketPath}/signup-v2.html`;
 
 if (window.location.pathname !== loginPath && window.location.pathname !== signupPath) {
-    checkLoggedIn()
+    validateSession(
+      function(response) {
+        window.localStorage.setItem('profile', JSON.stringify(response))
+      },
+      function(jqxhr, textStatus, errorThrown) {
+        let bucketPath = __BUCKET_PATH__;
+        console.log(`redirecting to ${bucketPath}/login-boxed.html`);
+        $(window).attr('location',`${bucketPath}/login-boxed.html`);
+      }
+    )
 }
 
 //Pageloader
-initPageloader();
+global.initPageloader();
 
 
 $(document).ready(function(){
 
     if (env === 'development') {
 		//Demo images
-        changeDemoHrefs();
+        global.changeDemoHrefs();
 
         //Demo hrefs
-        changeDemoImages();
+        global.changeDemoImages();
     }
 
     //Lazy Load
@@ -72,7 +62,7 @@ $(document).ready(function(){
             el.parentNode.classList.add('loaded');
         }
 	});
-	
+
     observer.observe();
 
     //Demo links
@@ -81,82 +71,83 @@ $(document).ready(function(){
         var theme = $(this).closest('.demo-link').attr('data-theme');
         window.localStorage.setItem('theme', theme);
         var href = $(this).attr('href');
-        
+
         window.open(href);
     });
-    
+
     //Toggle Dark mode
-    toggleTheme(); 
+    global.toggleTheme();
 
     //Code highlight init
     $('.highlight-block code').each(function (i, block) {
         hljs.highlightBlock(block);
     });
-    
-    //Init navbar v1
-    initNavbar();
 
     //Init navbar v2
     initNavbarV2();
 
     //Logout button
-    initLogout();
+    global.initLogout();
 
     //Dashboard
-    linkCheck();
+    global.linkCheck();
 
     //Mobile menu toggle
     initResponsiveMenu();
 
     //Navbar dropdown
-    initNavDropdowns();
+    global.initNavDropdowns();
 
     //Navbar Cart
-    initNavbarCart();
+    global.initNavbarCart();
 
     //Common Dropdown
-    initDropdowns();
+    global.initDropdowns();
 
     //Tabs
-    initTabs();
+    global.initTabs();
 
     //Modals
-    initModals();
+    global.initModals();
 
     //Attribute background images
-    initBgImages();
+    global.initBgImages();
 
     //Feather icons initialization
     feather.replace();
 
     //Emojis
-    initEmojiPicker();
+    global.initEmojiPicker();
 
-    initLightboxEmojis();
+    global.initLightboxEmojis();
 
     //Video Embed
-    initVideoEmbed();
+    global.initVideoEmbed();
 
     //Load More
-    initLoadMore();
+    global.initLoadMore();
 
     //Init tooltips
-    initTooltips();
+    global.initTooltips();
 
     //Init Like Button
-    initLikeButton();
+    global.initLikeButton();
 
     //Init Simple Popover
-    initSimplePopover();
+    global.initSimplePopover();
 
     //Share modal demo
-    initShareModal();   
+    global.initShareModal();   
 
     //Users autocomplete
-    initUsersAutocomplete();
+    global.initUsersAutocomplete();
 
     //Init Tipuedrop
-    initSuggestionSearch();
+    global.initSuggestionSearch();
+
+    // popovers
+    getUserPopovers();
+    getPagesPopovers();
 });
 
 

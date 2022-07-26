@@ -1,3 +1,14 @@
+import {initTooltips} from '../global.js'
+import {
+  buildConnectedFriend,
+  initFriendRequestDropdown,
+  initPostDropdown
+} from '../navigation/navbar-v2.js'
+import {
+  getConnectionInfo,
+  confirmConnection
+} from '../api.js'
+
 /*! profile-friends.js | Friendkit | © Css Ninja. 2019-2020 */
 
 /* ==========================================================================

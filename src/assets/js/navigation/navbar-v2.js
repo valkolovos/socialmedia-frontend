@@ -1,3 +1,4 @@
+import { createTime } from '../global.js';
 
 /*! navbar-mobile.js | Friendkit | © Css Ninja. 2019-2020 */
 
@@ -7,7 +8,7 @@ Navbar mobile js file
 
 "use strict";
 
-function initNavbarV2() {
+export function initNavbarV2() {
     if ($('.navbar-v2').length) {
 
         $('#open-mobile-search, .mobile-search .close-icon').on("click", function () {
@@ -52,11 +53,12 @@ function initNavbarV2() {
 };
 
 $(document).ready(function () {
-
+  $('#nav-drop-profile-name').html(JSON.parse(window.localStorage.getItem('profile')).display_name);
+  $('#nav-drop-header-profile-name').html(JSON.parse(window.localStorage.getItem('profile')).display_name);
 
 })
 
-function initFriendRequestDropdown(
+export function initFriendRequestDropdown(
     connections, confirmCallback=function(connectionId) { },
     declineCallback=function(connectionId) { }
 ) {
@@ -133,7 +135,7 @@ function buildFriendRequest(connection) {
         </div>`;
 }
 
-function buildConnectedFriend(connection) {
+export function buildConnectedFriend(connection) {
   let bucketPath = __BUCKET_PATH__;
   return `
         <div class="media">
@@ -175,7 +177,7 @@ function buildNotificationCard(notification) {
 }
 
 
-function initPostDropdown(postReferences) {
+export function initPostDropdown(postReferences) {
     let unreadNotifications = false;
     for (let i = 0; i < postReferences.length; i++) {
       if (!unreadNotifications && postReferences[i].reference_read === false) {
@@ -200,3 +202,4 @@ function initPostDropdown(postReferences) {
     });
     feather.replace();
 }
+

@@ -1,3 +1,31 @@
+import {
+  checkVisible,
+  createTime,
+  initLikeButton,
+  initPostComments,
+  initShareModal,
+  initTooltips
+} from '../global.js'
+
+import {
+  initFriendRequestDropdown,
+  initPostDropdown
+} from '../navigation/navbar-v2.js'
+
+import {
+  getConnectionInfo,
+  getConnectionPosts,
+  getPosts,
+  markPostRead,
+  postComment as apiPostComment
+} from '../api.js'
+
+import { getUserPopovers } from '../components/popovers-users.js'
+import { getPagesPopovers } from '../components/popovers-pages.js'
+
+import { readURL } from '../components/upload-utils.js'
+import { initComposeCard } from '../components/compose.js'
+
 /*! feed.js | Friendkit | © Css Ninja. 2019-2020 */
 
 /* ==========================================================================
@@ -87,9 +115,19 @@ $(document).ready(function () {
     "use strict";
 
     if ($('#post-data').length) {
-        let postResponse = getConnectionPosts();
+        let postResponse = getConnectionPosts(function(response) {
+            addAndActivatePosts(response, $('#post-data'), buildCard);
+            $('.post-comment-submit').on('click', function() { postComment(this) });
+            $('.upload-input').on('change', function() { readURL(this); });
+        });
     } else if ($('.profile-timeline').length) {
-        let posts = getPosts();
+        console.log('getting posts for profile-timeline')
+        initComposeCard();
+        let posts = getPosts(function(response) {
+            addAndActivatePosts(response, $('.profile-timeline'), buildCard);
+            $('.post-comment-submit').on('click', function() { postComment(this) });
+            $('.upload-input').on('change', function() { readURL(this); });
+        })
     }
 
     if ($('#activity-feed').length) {
@@ -186,52 +224,35 @@ $(document).ready(function () {
 });
 
 function postComment(t) {
-    let url = __API_HOST__;
     let postId = t.dataset.postId;
-    let submitData = new FormData();
+    let comment = $(`#comment-${postId}`).val();
     let urlParams = new URLSearchParams(window.location.search);
+    let connectionId = urlParams.get("c_id")
     let files = $(`#${postId}-upload-input`).first()[0].files;
-    submitData.append('comment', $(`#comment-${postId}`).val());
-    submitData.append('connectionId', urlParams.get("c_id"));
-    for (let i = 0; i < files.length; i++) {
-        submitData.append(`file-${i}`, files[i]);
-    }
-    $.ajax(`${url}/add-comment/${t.dataset.postId}`, {
-        method: 'POST',
-        headers: {
-            'Authorization': window.localStorage.getItem('authToken')
-        },
-        data: submitData,
-        cache: false,
-        contentType: false,
-        processData: false,
-        xhr: function() {
-            var xhr = $.ajaxSettings.xhr();
-            xhr.upload.onprogress = function (e) {
-                if (e.lengthComputable) {
-                    console.log('Uploaded ' + (e.loaded / e.total));
-                }
-            }
-            return xhr;
-        },
-        success: function(response) {
+    apiPostComment(
+        postId, comment, connectionId, files,
+        function(response) {
             $(`#${postId}-comments-body`).append(buildComment(response));
+            $(`#comment-${t.dataset.postId}`).val('');
+            $(`${t.dataset.postId}-comment-upload`).empty();
+            feather.replace();
         },
-        error: function(errorData, status, errorThrown) {
+        function(errorData, status, errorThrown) {
           // TODO: actually handle this?
           console.log(status);
           console.log(errorThrown);
         }
-    });
-    $(`#comment-${t.dataset.postId}`).val('');
-    $(`${t.dataset.postId}-comment-upload`).empty();
-    feather.replace();
+    );
 }
 
-function addAndActivatePosts(posts, appendToElement, buildFunction) {
+export function addAndActivatePosts(posts, appendToElement, buildFunction, append=true) {
     for (let i = 0; i < posts.length; i++) {
         let parentElement = `[data-card-id="${posts[i].id}"]`
-        appendToElement.append(buildFunction(posts[i]));
+        if (append === false) {
+            appendToElement.prepend(buildFunction(posts[i]));
+        } else {
+            appendToElement.append(buildFunction(posts[i]));
+        }
         // initDropdown()
         $(`[data-card-id="${posts[i].id}"] .dropdown-trigger`).click(function () {
             $(".dropdown-trigger").removeClass("is-active");
@@ -249,62 +270,12 @@ function addAndActivatePosts(posts, appendToElement, buildFunction) {
     feather.replace();
     getUserPopovers();
     getPagesPopovers();
+    if (posts.length > 0) {
+        $('#avatar-connection-name').html(posts[0].profile.display_name);
+        $('#friend-card-post-count').html(posts.length);
+    }
+    initTooltips('.user-info .has-tooltip');
 }
-
-function getPosts() {
-    let url = __API_HOST__;
-    let posts;
-    $.ajax(
-      {
-        url: `${url}/get-posts`,
-        cache: true,
-        async: false,
-        headers: {
-          'Authorization': window.localStorage.getItem('authToken')
-        },
-        success: function(response) {
-            addAndActivatePosts(response, $('.profile-timeline'), buildPost);
-        },
-        statusCode: {
-          401: function(jqxhr, textStatus, errorThrown) {
-            window.location.href = '/login-boxed.html'
-          }
-        }
-      }
-   )
-   return posts;
-}
-
-function getConnectionPosts() {
-    let url = __API_HOST__;
-    let connectionPosts
-    let urlParams = new URLSearchParams(window.location.search)
-    $.ajax(
-      {
-        url: `${url}/get-connection-posts/${urlParams.get("c_id")}`,
-        cache: true,
-        async: false,
-        headers: {
-          'Authorization': window.localStorage.getItem('authToken')
-        },
-        success: function(response) {
-            addAndActivatePosts(response, $('#post-data'), buildCard);
-            if (response.length > 0) {
-                $('#avatar-connection-name').html(response[0].profile.display_name);
-                $('#friend-card-post-count').html(response.length);
-            }
-            initTooltips('.user-info .has-tooltip');
-
-        },
-        statusCode: {
-          401: function(jqxhr, textStatus, errorThrown) {
-            window.location.href = '/login-boxed.html'
-          }
-        }
-      }
-   )
-   return connectionPosts
-};
 
 function buildComment(comment) {
     let commentTime = createTime(comment.created);
@@ -385,24 +356,13 @@ function buildComment(comment) {
     return commentHtml;
 }
 
-function buildPost(post) {
-    return `
-<div class="profile-post">
-    <!-- Timeline -->
-    <div class="time is-hidden-mobile">
-        <div class="img-container">
-            <img src="https://via.placeholder.com/300" data-demo-src="assets/img/avatars/jenna.png" alt="">
-        </div>
-    </div>
-    ${buildCard(post)}
-</div>`;
-}
-
 function buildCard(post) {
     let postTime = createTime(post.created);
     let imageHtml = '';
     if (post.files.length >  0) {
         imageHtml = buildImageHtml(post);
+    } else {
+        imageHtml = `<div class="post-actions">${buildActionButtonHtml()}</div>`
     }
     let commentDropdownHtml = `
 <div class="dropdown is-spaced is-right is-neutral dropdown-trigger">
@@ -442,7 +402,7 @@ function buildCard(post) {
     }
 
     let cardHtml = `
-<div class="card is-post" data-card-id="${post.id}" ${post.read === false ? 'data-card-read="false"' : ''}><a href="#${post.id}"></a>
+<div class="card is-post${post.files.length === 0 ? ' is-simple' : ''}" data-card-id="${post.id}" ${post.read === false ? 'data-card-read="false"' : ''}><a href="#${post.id}"></a>
     <!-- Main wrap -->
     <div class="content-wrap">
         <!-- Post header -->
@@ -590,9 +550,9 @@ function buildCard(post) {
                             </div>
                             <div class="action is-upload">
                                 <i data-feather="camera"></i>
-                                <input id="${post.id}-upload-input" type="file" accept=".png, .jpg, .jpeg" onchange="readURL(this)" data-target-id="#${post.id}-comment-upload">
+                                <input id="${post.id}-upload-input" class="upload-input" type="file" accept=".png, .jpg, .jpeg" data-target-id="#${post.id}-comment-upload">
                             </div>
-                            <a class="button is-solid primary-button raised" data-post-id="${post.id}" onclick="postComment(this)">Post Comment</a>
+                            <a class="button is-solid primary-button raised post-comment-submit" data-post-id="${post.id}">Post Comment</a>
                         </div>
                     </div>
                 </div>

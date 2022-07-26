@@ -6,7 +6,7 @@ Handles the user popovers that appear when hovering a user image
 
 "use strict";
 
-function getUserPopovers() {
+export function getUserPopovers() {
     $('*[data-user-popover]').each(function () {
         var e = $(this);
         var userRef = $(this).attr('data-user-popover');
@@ -96,9 +96,6 @@ function getUserPopovers() {
         });
     });
 }
-
-$(document).ready(function () {
-
     /* Users
 
         0. Jenna Davis
@@ -128,6 +125,3 @@ $(document).ready(function () {
         24. Hisashi Yokida
     */
 
-    getUserPopovers();
-
-})

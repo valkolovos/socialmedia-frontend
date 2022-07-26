@@ -1,3 +1,5 @@
+import { signup } from '../api.js'
+
 "use strict";
 
 // check for form validity

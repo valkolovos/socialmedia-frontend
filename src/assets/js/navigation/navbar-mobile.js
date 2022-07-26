@@ -7,7 +7,7 @@ Navbar mobile js file
 
 "use strict";
 
-function initResponsiveMenu() {
+export function initResponsiveMenu() {
     if ($('.navbar-burger').length) {
         $('.navbar-burger').on("click", function () {
             $(this).toggleClass('is-active');

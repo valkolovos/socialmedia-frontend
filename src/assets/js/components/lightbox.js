@@ -4,6 +4,8 @@
 Fancybox functions
 ========================================================================== */
 
+import { initDropdowns, initLightboxEmojis } from '../global.js'
+
 $(document).ready(function(){
 
     "use strict";

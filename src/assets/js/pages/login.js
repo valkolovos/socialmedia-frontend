@@ -1,3 +1,5 @@
+import {logIn} from '../api.js'
+
 // check for form validity
 function checkValidity() {
     if ($('input[name="email"]').val() !== '' && $('input[name="password"]').val() !== '') {
@@ -14,6 +16,8 @@ $(document).ready(function () {
   "use strict";
 
   $('input[name="email"]').on('blur input', function() {
+    $('h3.form-subtitle-error').text('')
+    $('h3.form-subtitle-error').addClass('is-hidden')
     if ($('input[name="email"]').val() === '') {
       $('.login-form .form-panel .field .email').removeClass('has-success')
       $('.login-form .form-panel .field .email').addClass('has-error')
@@ -24,7 +28,15 @@ $(document).ready(function () {
     checkValidity()
   })
 
+  $('input[name="email"],input[name="password"]').keypress(function(e) {
+    if (e.which == 13) {
+        $('.login-form > .buttons > .button').click();
+    }
+  });
+
   $('input[name="password"]').on('blur input', function() {
+    $('h3.form-subtitle-error').text('')
+    $('h3.form-subtitle-error').addClass('is-hidden')
     if ($('input[name="password"]').val() === '') {
       $('.login-form .form-panel .field .password').removeClass('has-success')
       $('.login-form .form-panel .field .password').addClass('has-error')

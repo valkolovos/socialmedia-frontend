@@ -23,6 +23,10 @@ const babel = require('gulp-babel');
 const nodepath = 'node_modules/';
 const assetspath = 'assets/';
 const fs = require('fs');
+const webpack = require('webpack-stream');
+const named = require('vinyl-named')
+const path = require('path')
+const TerserPlugin = require('terser-webpack-plugin');
 
 // File paths
 const files = {
@@ -78,46 +82,64 @@ function compileHTML() {
 // COPY CUSTOM JS
 function compileJS() {
   console.log('---------------COMPILE CUSTOM JS---------------');
+  let webpackConfig = {
+    optimization: {
+      minimize: true,
+			minimizer: [
+        new TerserPlugin({
+          extractComments: false,
+          terserOptions: {
+            format: {
+              comments: false,
+            }
+          }
+        })
+      ]
+    },
+    module:{
+      rules: [
+        {
+          use: {
+            loader: 'babel-loader'
+          }
+        }
+      ]
+    }
+  }
   return src([
+    'src/assets/js/main.js',
+    'src/assets/js/components/lightbox.js',
+    'src/assets/js/pages/feed.js',
+    'src/assets/js/pages/profile-friends.js',
+    'src/assets/js/pages/login.js',
     'src/assets/js/components/compose.js',
     'src/assets/js/components/autocompletes.js',
-    'src/assets/js/components/webcam.js',
+    //'src/assets/js/components/webcam.js',
     'src/assets/js/components/widgets.js',
     'src/assets/js/components/elements.js',
-    'src/assets/js/components/modal-uploader.js',
-    'src/assets/js/components/lightbox.js',
-    'src/assets/js/components/popovers-pages.js',
-    'src/assets/js/components/popovers-users.js',
-    'src/assets/js/navigation/navbar-v1.js',
-    'src/assets/js/navigation/navbar-v2.js',
-    'src/assets/js/navigation/navbar-mobile.js',
+    //'src/assets/js/components/modal-uploader.js',
     'src/assets/js/navigation/navbar-options.js',
-    'src/assets/js/api.js',
-    'src/assets/js/global.js',
-    'src/assets/js/main.js',
     'src/assets/js/touch.js',
-    'src/assets/js/tour.js',
-    'src/assets/js/pages/chat.js',
-    'src/assets/js/pages/events.js',
-    'src/assets/js/pages/explorer.js',
-    'src/assets/js/pages/feed.js',
-    'src/assets/js/pages/stories.js',
-    'src/assets/js/pages/friends.js',
-    'src/assets/js/pages/profile-friends.js',
-    'src/assets/js/pages/inbox.js',
-    'src/assets/js/pages/landing.js',
-    'src/assets/js/pages/login.js',
-    'src/assets/js/pages/news.js',
-    'src/assets/js/pages/map.js',
+    //'src/assets/js/tour.js',
+    //'src/assets/js/pages/chat.js',
+    //'src/assets/js/pages/events.js',
+    //'src/assets/js/pages/explorer.js',
+    //'src/assets/js/pages/stories.js',
+    //'src/assets/js/pages/friends.js',
+    //'src/assets/js/pages/inbox.js',
+    //'src/assets/js/pages/landing.js',
+    //'src/assets/js/pages/news.js',
+    //'src/assets/js/pages/map.js',
     'src/assets/js/pages/profile.js',
-    'src/assets/js/pages/questions.js',
-    'src/assets/js/pages/shop.js',
-    'src/assets/js/pages/signup.js',
+    //'src/assets/js/pages/questions.js',
+    //'src/assets/js/pages/shop.js',
+    //'src/assets/js/pages/signup.js',
     'src/assets/js/pages/signup-v2.js',
-    'src/assets/js/pages/settings.js',
-    'src/assets/js/pages/videos.js',
+    //'src/assets/js/pages/settings.js',
+    //'src/assets/js/pages/videos.js',
   ])
-    .pipe(babel())
+    .pipe(named())
+    .pipe(webpack(webpackConfig))
     .pipe(uglify())
     .pipe(dest('dist/assets/js/'))
     .pipe(browserSync.stream());
@@ -423,3 +445,8 @@ exports.build = series(
   compileSCSS
 );
 
+exports.compile = series(
+  cleanDist,
+  writeConfigs,
+  compileJS
+)

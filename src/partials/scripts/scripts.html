@@ -4,26 +4,20 @@
 <script src="{{deploy.bucket_path}}{{ root }}assets/data/tipuedrop_content.js?_={{deploy.cache_bust}}"></script>
 
 <!-- Core js -->
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/global.js?_={{deploy.cache_bust}}"></script>
 
 <!-- Navigation options js -->
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/navbar-v1.js?_={{deploy.cache_bust}}"></script>
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/navbar-v2.js?_={{deploy.cache_bust}}"></script>
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/navbar-mobile.js?_={{deploy.cache_bust}}"></script>
 <script src="{{deploy.bucket_path}}{{ root }}assets/js/navbar-options.js?_={{deploy.cache_bust}}"></script>
 
 <!-- Core instance js -->
 <script src="{{deploy.bucket_path}}{{ root }}assets/js/main.js?_={{deploy.cache_bust}}"></script>
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/chat.js?_={{deploy.cache_bust}}"></script>
+<!-- <script src="{{deploy.bucket_path}}{{ root }}assets/js/chat.js?_={{deploy.cache_bust}}"></script> -->
 <script src="{{deploy.bucket_path}}{{ root }}assets/js/touch.js?_={{deploy.cache_bust}}"></script>
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/tour.js?_={{deploy.cache_bust}}"></script>
+<!-- <script src="{{deploy.bucket_path}}{{ root }}assets/js/tour.js?_={{deploy.cache_bust}}"></script> -->
 
 <!-- Components js -->
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/explorer.js?_={{deploy.cache_bust}}"></script>
+<!-- <script src="{{deploy.bucket_path}}{{ root }}assets/js/explorer.js?_={{deploy.cache_bust}}"></script> -->
 <script src="{{deploy.bucket_path}}{{ root }}assets/js/widgets.js?_={{deploy.cache_bust}}"></script>
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/modal-uploader.js?_={{deploy.cache_bust}}"></script>
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/popovers-users.js?_={{deploy.cache_bust}}"></script>
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/popovers-pages.js?_={{deploy.cache_bust}}"></script>
+<!-- <script src="{{deploy.bucket_path}}{{ root }}assets/js/modal-uploader.js?_={{deploy.cache_bust}}"></script> -->
 <script src="{{deploy.bucket_path}}{{ root }}assets/js/lightbox.js?_={{deploy.cache_bust}}"></script>
 
 <!-- Landing page js -->
@@ -38,13 +32,11 @@
 
 <!-- Login page js -->
 {{#ifpage 'login-boxed'}}
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/api.js?_={{deploy.cache_bust}}"></script>
 <script src="{{deploy.bucket_path}}{{ root }}assets/js/login.js?_={{deploy.cache_bust}}"></script>
 {{/ifpage}}
 
 <!-- signup page js -->
 {{#ifpage 'signup-v2'}}
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/api.js?_={{deploy.cache_bust}}"></script>
 <script src="{{deploy.bucket_path}}{{ root }}assets/js/signup-v2.js?_={{deploy.cache_bust}}"></script>
 <!-- load signup shit here -->
 {{/ifpage}}
@@ -56,10 +48,10 @@
 'navbar-v2-pages-main' 'sidebar-v1-feed' 'sidebar-v1-profile-main'
 'sidebar-v1-pages-main' }}
 <script src="{{deploy.bucket_path}}{{ root }}assets/js/feed.js?_={{deploy.cache_bust}}"></script>
-{{/ifpage}} {{#ifpage 'navbar-v1-feed' 'navbar-v1-feed-sidebar' 'navbar-v2-feed'
+{{/ifpage}}
+{{#ifpage 'navbar-v1-feed' 'navbar-v1-feed-sidebar' 'navbar-v2-feed'
 'navbar-v2-feed-sidebar' 'sidebar-v1-feed' }}
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/api.js?_={{deploy.cache_bust}}"></script>
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/webcam.js?_={{deploy.cache_bust}}"></script>
+<!-- <script src="{{deploy.bucket_path}}{{ root }}assets/js/webcam.js?_={{deploy.cache_bust}}"></script> -->
 <script src="{{deploy.bucket_path}}{{ root }}assets/js/autocompletes.js?_={{deploy.cache_bust}}"></script>
 {{/ifpage}}
 
@@ -73,9 +65,7 @@
 'sidebar-v1-profile-friends' 'sidebar-v1-profile-photos'
 'sidebar-v1-profile-main' 'sidebar-v1-pages-about' 'sidebar-v1-pages-community'
 'sidebar-v1-pages-photos' 'sidebar-v1-pages-main' }}
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/api.js?_={{deploy.cache_bust}}"></script>
 <script src="{{deploy.bucket_path}}{{ root }}assets/js/profile.js?_={{deploy.cache_bust}}"></script>
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/compose.js?_={{deploy.cache_bust}}"></script>
 {{/ifpage}}
 
 <!-- stories js -->
@@ -91,7 +81,6 @@
 {{/ifpage}}
 
 {{#ifpage 'navbar-v2-profile-friends'}}
-<script src="{{deploy.bucket_path}}{{ root }}assets/js/api.js?_={{deploy.cache_bust}}"></script>
 <script src="{{deploy.bucket_path}}{{ root }}assets/js/profile-friends.js?_={{deploy.cache_bust}}"></script>
 {{/ifpage}}
 

@@ -6,12 +6,14 @@ Project wide reusable functions
 
 "use strict";
 
+import { parse } from 'date-fns'
+
 /* ==========================================================================
 Utility / Demo
 ========================================================================== */
 
 //Change demo images
-function changeDemoImages() {
+export function changeDemoImages() {
   $("*[data-demo-src]").each(function () {
     var newSrc = $(this).attr("data-demo-src");
     $(this).attr("src", newSrc);
@@ -24,7 +26,7 @@ function changeDemoImages() {
 }
 
 //Change demo hrefs
-function changeDemoHrefs() {
+export function changeDemoHrefs() {
   $("*[data-demo-href]").each(function () {
     var newHref = $(this).attr("data-demo-href");
     $(this).attr("href", newHref);
@@ -32,7 +34,7 @@ function changeDemoHrefs() {
 }
 
 //Init attribute background images
-function initBgImages() {
+export function initBgImages() {
   if ($(".has-background-image").length) {
     $(".has-background-image").each(function () {
       var bgImage = $(this).attr("data-background");
@@ -59,7 +61,7 @@ function setThemeToLocalStorage(value) {
   }
 }
 
-function toggleTheme() {
+export function toggleTheme() {
   var theme = window.localStorage.getItem("theme");
   if (theme != null && theme != undefined) {
     setThemeToLocalStorage(theme);
@@ -84,7 +86,7 @@ function toggleTheme() {
   });
 }
 
-function linkCheck() {
+export function linkCheck() {
   if ($(".dashboard-aside-link").length) {
     $(".dashboard-aside-link").each(function () {
       if ($(this).prop("href") == window.location.href) {
@@ -98,7 +100,7 @@ function linkCheck() {
 Pageloader
 ========================================================================== */
 
-function initPageloader() {
+export function initPageloader() {
   if ($(".pageloader").length) {
     $(".pageloader").toggleClass("is-active");
 
@@ -134,12 +136,12 @@ UI Elements
 ========================================================================== */
 
 //init tipue search
-function initSuggestionSearch() {
+export function initSuggestionSearch() {
   $("#tipue_drop_input, #tipue_drop_input_mobile").tipuedrop();
 }
 
 //Init nav/toolbar dropdowns
-function initNavDropdowns() {
+export function initNavDropdowns() {
   $(".drop-trigger").click(function () {
     $(".nav-drop").removeClass("is-active");
     $(this).find(".nav-drop").addClass("is-active");
@@ -160,7 +162,7 @@ function initNavDropdowns() {
   });
 }
 
-function initLogout() {
+export function initLogout() {
     $('#log-out').click(function() {
         window.localStorage.removeItem('authToken');
         window.localStorage.removeItem('authExpires');
@@ -169,7 +171,7 @@ function initLogout() {
 }
 
 //Init Cart dropdown
-function initNavbarCart() {
+export function initNavbarCart() {
   $(".is-cart .cart-button").on("click", function () {
     $(this).closest(".is-cart").find(".shopping-cart").addClass("is-active");
     setTimeout(function () {
@@ -192,7 +194,7 @@ function initNavbarCart() {
 }
 
 //Init dropdowns
-function initDropdowns() {
+export function initDropdowns() {
   $(".dropdown-trigger").click(function () {
     $(".dropdown-trigger").removeClass("is-active");
     $(this).addClass("is-active");
@@ -210,7 +212,7 @@ function initDropdowns() {
 }
 
 //Init tabs
-function initTabs() {
+export function initTabs() {
   $(".nav-tabs-wrapper ul li").on("click", function () {
     var tab_id = $(this).attr("data-tab");
 
@@ -226,7 +228,7 @@ function initTabs() {
 }
 
 //Init modals
-function initModals() {
+export function initModals() {
   if ($(".modal-trigger").length) {
     $(".modal-trigger").on("click", function () {
       var modalID = $(this).attr("data-modal");
@@ -240,7 +242,7 @@ function initModals() {
 }
 
 //Init Emojis
-function initEmojiPicker() {
+export function initEmojiPicker() {
   var id = 0;
   $(".post-comment.has-emojis").each(function () {
     id = id + 1;
@@ -274,7 +276,7 @@ function initEmojiPicker() {
   });
 }
 
-function initLightboxEmojis() {
+export function initLightboxEmojis() {
   var id = 0;
   $(".has-lightbox-emojis").each(function () {
     id = id + 1;
@@ -315,14 +317,14 @@ function initLightboxEmojis() {
 }
 
 //Video Embed
-function initVideoEmbed() {
+export function initVideoEmbed() {
   if ($("#video-embed").length) {
     embedVideo("#video-embed");
   }
 }
 
 //Init Like button
-function initLikeButton(parentElement) {
+export function initLikeButton(parentElement) {
   let selector = '.like-button';
   if (parentElement !== null) {
     selector = `${parentElement} ${selector}`;
@@ -333,7 +335,7 @@ function initLikeButton(parentElement) {
 }
 
 //Load more buttons
-function initLoadMore() {
+export function initLoadMore() {
   var t;
   $(".load-more-button").on("click", function (e) {
     e.preventDefault();
@@ -346,7 +348,7 @@ function initLoadMore() {
 }
 
 //Post Comment sections toggling
-function initPostComments(parentElement=null) {
+export function initPostComments(parentElement=null) {
   let selector = ".fab-wrapper.is-comment, .close-comments"
   if (parentElement !== null) {
     selector = `${parentElement} .fab-wrapper.is-comment, ${parentElement} .close-comments`;
@@ -370,7 +372,7 @@ function initPostComments(parentElement=null) {
 }
 
 //Simple popover
-function initSimplePopover() {
+export function initSimplePopover() {
   $(".has-tip").webuiPopover({
     trigger: "hover",
     placement: "auto",
@@ -384,7 +386,7 @@ function initSimplePopover() {
 }
 
 //Tooltips
-function initTooltips(selector='.has-tooltip') {
+export function initTooltips(selector='.has-tooltip') {
   $(selector).ggtooltip({
     html: true,
     textcolor: "#fff",
@@ -397,7 +399,7 @@ function initTooltips(selector='.has-tooltip') {
 Combo boxes
 ========================================================================== */
 
-function initUsersAutocomplete() {
+export function initUsersAutocomplete() {
   //Friends autocomplete
   if ($("#users-autocpl").length) {
     var html = "";
@@ -823,7 +825,7 @@ Global Modals
 ========================================================================== */
 
 //Init share modal demo
-function initShareModal(parentElement=null) {
+export function initShareModal(parentElement=null) {
   let selector = ".small-fab.share-fab"
   if (parentElement !== null) {
     selector = `${parentElement} ${selector}`;
@@ -950,12 +952,13 @@ toasts.service = {
   },
 };
 
-function createTime(time) {
+export function createTime(time) {
     const monthNames = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
-    let myDate = new Date(time);
+    // 2022-07-24 13:55:33.243347+00:00
+    let myDate = parse(time, 'yyyy-MM-d HH:mm:ss.SSSSSSxxx', new Date())
     let elapsedSeconds = Math.round(((new Date()).getTime() - myDate.getTime()) / 1000);
     let returnString;
     if (elapsedSeconds < 60) {
@@ -976,7 +979,7 @@ function createTime(time) {
     }
 }
 
-function checkVisible( elm, evalType ) {
+export function checkVisible( elm, evalType ) {
     evalType = evalType || "visible";
 
     var vpH, st, y, elementHeight;

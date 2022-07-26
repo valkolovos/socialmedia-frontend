@@ -6,7 +6,7 @@ Handles the pages popovers that appear when hovering a page avatar
 
 "use strict";
 
-function getPagesPopovers() {
+export function getPagesPopovers() {
     $('*[data-page-popover]').each(function () {
         var e = $(this);
         var pageRef = $(this).attr('data-page-popover');
@@ -96,8 +96,6 @@ function getPagesPopovers() {
     });
 }
 
-$(document).ready(function () {
-
     /* Pages
 
         0. Fast Pizza
@@ -117,6 +115,3 @@ $(document).ready(function () {
         16. Downtown Subs
     */
 
-    getPagesPopovers();
-
-})

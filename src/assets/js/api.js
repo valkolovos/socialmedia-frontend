@@ -1,4 +1,23 @@
-function logIn(email, password, callback, errorCallback) {
+export function validateSession(successCallback, callback401) {
+  let url = __API_HOST__;
+  let redirect;
+  $.ajax(
+    {
+      url: `${url}/validate-session`,
+      cache: false,
+      async: false,
+      headers: {
+        'Authorization': window.localStorage.getItem('authToken')
+      },
+      success: successCallback,
+      statusCode: {
+        401: callback401
+      }
+    }
+  )
+}
+
+export function logIn(email, password, callback, errorCallback) {
   let url = __API_HOST__;
   $.ajax(
     {
@@ -20,7 +39,7 @@ function logIn(email, password, callback, errorCallback) {
   );
 }
 
-function signup(email, displayName, handle, password, callback, errorCallback) {
+export function signup(email, displayName, handle, password, callback, errorCallback) {
   let url = __API_HOST__;
   $.ajax(
     {
@@ -44,7 +63,7 @@ function signup(email, displayName, handle, password, callback, errorCallback) {
   );
 }
 
-function getConnectionInfo(connectionCallback) {
+export function getConnectionInfo(connectionCallback) {
     let connectionInfo;
     let url = __API_HOST__;
     $.ajax(
@@ -88,7 +107,7 @@ function requestConnection(handle, host, callback) {
     });
 }
 
-function confirmConnection(connectionId, callback) {
+export function confirmConnection(connectionId, callback) {
     let url = __API_HOST__;
     $.ajax({
         method: 'POST',
@@ -160,7 +179,7 @@ function markNotificationRead(postId, callback) {
     });
 }
 
-function markPostRead(postId, callback) {
+export function markPostRead(postId, callback) {
     let url = __API_HOST__;
     $.ajax({
         method: 'GET',
@@ -175,3 +194,111 @@ function markPostRead(postId, callback) {
         },
     });
 }
+
+export function getPosts(successCallback) {
+    let url = __API_HOST__;
+    let posts;
+    $.ajax(
+      {
+        url: `${url}/get-posts`,
+        cache: true,
+        async: false,
+        headers: {
+          'Authorization': window.localStorage.getItem('authToken')
+        },
+        success: successCallback,
+        statusCode: {
+          401: function(jqxhr, textStatus, errorThrown) {
+            window.location.href = '/login-boxed.html'
+          }
+        }
+      }
+   )
+   return posts;
+}
+
+export function getConnectionPosts(successCallback) {
+    let url = __API_HOST__;
+    let connectionPosts
+    let urlParams = new URLSearchParams(window.location.search)
+    $.ajax(
+      {
+        url: `${url}/get-connection-posts/${urlParams.get("c_id")}`,
+        cache: true,
+        async: false,
+        headers: {
+          'Authorization': window.localStorage.getItem('authToken')
+        },
+        success: successCallback,
+        statusCode: {
+          401: function(jqxhr, textStatus, errorThrown) {
+            window.location.href = '/login-boxed.html'
+          }
+        }
+      }
+   )
+   return connectionPosts
+};
+
+
+export function createPost(submitData, successCallback) {
+    let url = __API_HOST__;
+    $.ajax(`${url}/create-post`, {
+        /* Set header for the XMLHttpRequest to get data from the web server
+        associated with userIdToken */
+        method: 'POST',
+        headers: {
+            'Authorization': window.localStorage.getItem('authToken')
+        },
+        data: submitData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        xhr: function() {
+            var xhr = $.ajaxSettings.xhr();
+            xhr.upload.onprogress = function (e) {
+                if (e.lengthComputable) {
+                    console.log('Uploaded ' + (e.loaded / e.total));
+                }
+            }
+            return xhr;
+        },
+        success: successCallback,
+        error: function(errorData, status, errorThrown) {
+            console.log(status);
+            console.log(errorThrown);
+        }
+    });
+}
+
+export function postComment(postId, comment, connectionId, files, successCallback, errorCallback) {
+    let url = __API_HOST__;
+    let submitData = new FormData();
+    submitData.append('comment', comment);
+    submitData.append('connectionId', connectionId);
+    for (let i = 0; i < files.length; i++) {
+        submitData.append(`file-${i}`, files[i]);
+    }
+    $.ajax(`${url}/add-comment/${postId}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': window.localStorage.getItem('authToken')
+        },
+        data: submitData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        xhr: function() {
+            var xhr = $.ajaxSettings.xhr();
+            xhr.upload.onprogress = function (e) {
+                if (e.lengthComputable) {
+                    console.log('Uploaded ' + (e.loaded / e.total));
+                }
+            }
+            return xhr;
+        },
+        success: successCallback,
+        error: errorCallback
+    });
+}
+

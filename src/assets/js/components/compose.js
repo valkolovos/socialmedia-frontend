@@ -1,3 +1,7 @@
+import { initPostComments } from '../global.js'
+import { readURL } from './upload-utils.js'
+import { createPost } from '../api.js'
+import { addAndActivatePosts } from '../pages/feed.js'
 /*! compose.js | Friendkit | © Css Ninja. 2019-2021 */
 
 /* ==========================================================================
@@ -64,57 +68,6 @@ function openTravelDrop() {
     $("#travel-autocpl").triggerHandler(e);
 };
 
-function readURLOnload(e) {
-    var deleteIcon = feather.icons.x.toSvg();
-    var template = `
-        <div class="upload-wrap" data-input-name="${e.target.inputName}">
-            <img src="${e.target.result}" data-file-name="${e.target.fileName}" alt="">
-            <span class="remove-file">
-                ${deleteIcon}
-            </span>
-        </div>
-    `;
-
-    $(e.target.targetId).append(template);
-
-    $('.remove-file').on('click', function(){
-        let fileName = $(this).prev().data().fileName;
-        let inputName = $(this).parent().data().inputName;
-        let fileBuffer = Array.from($(`#${inputName}`)[0].files);
-        // had to use a hack to remove a file from the immutable file list
-        let removeIdx;
-        for (var i = 0; i < fileBuffer.length; i++) {
-            if (fileBuffer[i].name === fileName) {
-                removeIdx = i;
-            }
-        }
-        if (removeIdx !== undefined) {
-            fileBuffer.splice(removeIdx, 1)
-        }
-        const dT = new ClipboardEvent('').clipboardData || // Firefox < 62 workaround exploiting https://bugzilla.mozilla.org/show_bug.cgi?id=1422655
-            new DataTransfer(); // specs compliant (as of March 2018 only Chrome)
-        for (var i = 0; i < fileBuffer.length; i++) {
-          dT.items.add(fileBuffer[i]);
-        }
-        $(`#${inputName}`)[0].files = dT.files;
-        $(this).closest('.upload-wrap').remove();
-    });
-}
-
-function readURL(input) {
-    if (input.files) {
-        $(`.upload-wrap[data-input-name="${input.id}"]`).remove();
-        for (let i = 0; i < input.files.length; i++) {
-            var reader = new FileReader();
-            reader.fileName = input.files[i].name;
-            reader.inputName = input.id;
-            reader.targetId = input.dataset.targetId;
-            reader.onload = readURLOnload;
-            reader.readAsDataURL(input.files[i]);
-        }
-    }
-}
-
 function albumsHelp() {
     $('#albums-help-modal .next-modal').one('click', function () {
         $(this).closest('.card-body').find('.content-block, .dot').toggleClass('is-active');
@@ -167,7 +120,7 @@ function endVideoHelp() {
 Compose card events
 ========================================================================== */
 
-if ($('#compose-card').length) {
+export function initComposeCard() {
 
     //Open publish mode
     $('#publish').on('click', function () {
@@ -199,8 +152,10 @@ if ($('#compose-card').length) {
         }
     });
 
+    $('#feed-upload-input-1').on('change', function() { readURL(this); });
+    $('#feed-upload-input-2').on('change', function() { readURL(this); });
+
     $('#publish-button').on('click', function() {
-        let url = __API_HOST__;
         let submitData = new FormData();
         submitData.append('post', $('#publish').val());
         let files = []
@@ -212,33 +167,12 @@ if ($('#compose-card').length) {
         for (let i = 0; i < files.length; i++) {
             submitData.append(`file-${i}`, files[i]);
         }
-        $.ajax(`${url}/create-post`, {
-						/* Set header for the XMLHttpRequest to get data from the web server
-						associated with userIdToken */
-						method: 'POST',
-            headers: {
-                'Authorization': window.localStorage.getItem('authToken')
-            },
-						data: submitData,
-						cache: false,
-						contentType: false,
-						processData: false,
-						xhr: function() {
-							  var xhr = $.ajaxSettings.xhr();
-  							xhr.upload.onprogress = function (e) {
-								    if (e.lengthComputable) {
-									      console.log('Uploaded ' + (e.loaded / e.total));
-								    }
-							  }
-							  return xhr;
-						},
-            success: function(response) {
-                console.log(response);
-            },
-						error: function(errorData, status, errorThrown) {
-							  console.log(status);
-							  console.log(errorThrown);
-						}
+        createPost(submitData, function(response) {
+            console.log(response);
+            addAndActivatePosts([response], $('.profile-timeline'), buildCard, false);
+            $('.close-publish').click();
+            $('.remove-file').click();
+            $('#publish')[0].value = '';
         });
     });
 
